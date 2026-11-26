@@ -361,5 +361,10 @@
       "google": "Google",
       "zalo": "Zalo"
     }
+  },
+  "comingSoon": {
+    "title": "Tính năng đang được cập nhật",
+    "zalo": "Đăng nhập bằng Zalo sẽ sớm có mặt. Trong lúc chờ, bạn có thể đăng nhập bằng Google hoặc email.",
+    "ok": "Đã hiểu"
   }
 }

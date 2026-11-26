@@ -410,5 +410,10 @@
     "guest": "Guest",
     "sale": "Sales",
     "admin": "Admin"
+  },
+  "comingSoon": {
+    "title": "Coming soon",
+    "zalo": "Zalo sign-in will be available soon. In the meantime, you can sign in with Google or email.",
+    "ok": "Got it"
   }
 }

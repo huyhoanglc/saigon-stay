@@ -5,6 +5,8 @@ import { useAuth } from "../hooks/useAuth";
 import Container from "../components/Container";
 import Avatar from "../components/Avatar";
 import ErrorMessage from "../components/ErrorMessage";
+import ComingSoonDialog from "../components/ComingSoonDialog";
+import { ZALO_LOGIN_ENABLED } from "../utils/features";
 import { GoogleLogo, ZaloLogo } from "../components/BrandIcons";
 import { UploadIcon, TrashIcon, CheckIcon } from "../components/Icons";
 import {
@@ -387,12 +389,21 @@ function ConnectionsCard({ user, onUserChange, initialErrorCode, linkedProvider 
   const { t } = useTranslation();
   const [busy, setBusy] = useState("");
   const [errorCode, setErrorCode] = useState(initialErrorCode);
+  const [showComingSoon, setShowComingSoon] = useState(false);
 
   let successMessage = "";
   if (linkedProvider === "google" || linkedProvider === "zalo") {
     successMessage = t("profile.linkedSuccess", {
       provider: t("profile.provider." + linkedProvider),
     });
+  }
+
+  function handleOpenComingSoon() {
+    setShowComingSoon(true);
+  }
+
+  function handleCloseComingSoon() {
+    setShowComingSoon(false);
   }
 
   async function handleUnlink(provider) {
@@ -451,6 +462,17 @@ function ConnectionsCard({ user, onUserChange, initialErrorCode, linkedProvider 
                   {t("profile.unlink")}
                 </button>
               );
+            } else if (provider.key === "zalo" && !ZALO_LOGIN_ENABLED) {
+              // Zalo đang tạm tắt → chỉ mở popup "đang cập nhật"
+              action = (
+                <button
+                  type="button"
+                  onClick={handleOpenComingSoon}
+                  className={secondaryButtonClass}
+                >
+                  {t("profile.link")}
+                </button>
+              );
             } else {
               // Chuyển sang trang Google/Zalo, xong quay về /profile
               action = (
@@ -476,6 +498,7 @@ function ConnectionsCard({ user, onUserChange, initialErrorCode, linkedProvider 
           })}
         </ul>
       </div>
+      <ComingSoonDialog open={showComingSoon} onClose={handleCloseComingSoon} />
     </Card>
   );
 }

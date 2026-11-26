@@ -86,6 +86,16 @@ const google = {
 };
 
 // ===== Zalo =====
+
+// Mã lỗi Zalo trả về khi request lấy thông tin cá nhân đến từ IP ngoài Việt Nam
+const ZALO_IP_LIMITED = -501;
+
+async function fetchZaloMe(accessToken, fields) {
+  const response = await fetch("https://graph.zalo.me/v2.0/me?fields=" + fields, {
+    headers: { access_token: accessToken },
+  });
+  return response.json();
+}
 // Zalo bắt buộc dùng PKCE: gửi code_challenge lúc bắt đầu, gửi code_verifier lúc đổi code.
 // Zalo không cung cấp email.
 
@@ -131,11 +141,15 @@ const zalo = {
       throw new Error("Zalo không trả về access_token: " + JSON.stringify(tokenData));
     }
 
-    const profileResponse = await fetch(
-      "https://graph.zalo.me/v2.0/me?fields=id,name,picture",
-      { headers: { access_token: tokenData.access_token } },
-    );
-    const profile = await profileResponse.json();
+    let profile = await fetchZaloMe(tokenData.access_token, "id,name,picture");
+
+    // Zalo chặn lấy thông tin cá nhân (tên, ảnh) khi server không đặt ở Việt Nam
+    // (Render đang ở Singapore) → lỗi -501. Khi đó chỉ xin id: đủ để nhận ra tài khoản,
+    // tên và ảnh người dùng tự sửa ở trang cá nhân.
+    if (!profile.id && profile.error === ZALO_IP_LIMITED) {
+      profile = await fetchZaloMe(tokenData.access_token, "id");
+    }
+
     if (!profile.id) {
       throw new Error("Zalo không trả về thông tin: " + JSON.stringify(profile));
     }
@@ -347,10 +361,13 @@ export async function oauthCallback(req, res) {
   }
 
   // Người mới hoàn toàn → tạo tài khoản guest
+  let needsName = false;
   if (!user) {
     let name = profile.name.trim();
     if (name === "") {
+      // Không lấy được tên (Zalo chặn IP ngoài Việt Nam) → đặt tạm, chuyển tới trang cá nhân để tự sửa
       name = "SaiGon Stay User";
+      needsName = true;
     }
 
     const newUser = {
@@ -371,5 +388,10 @@ export async function oauthCallback(req, res) {
   }
 
   setAuthCookies(res, user);
+
+  // Web admin không có trang profile, nên chỉ chuyển tới /profile khi đang ở web khách
+  if (needsName && !origin.includes("admin")) {
+    return res.redirect(origin + "/profile");
+  }
   res.redirect(origin + stateData.redirect);
 }
