@@ -9,7 +9,7 @@ const SORTS = {
 };
 
 const BUILDING_FIELDS =
-  "name address roadType hasElevator hasFireSafety petAllowed isNewOpening fees";
+  "name address.street address.ward address.area roadType hasElevator hasFireSafety petAllowed isNewOpening fees";
 
 export async function listRooms(req, res) {
   const { area, layout, minPrice, maxPrice, hot, newOpening, sort } = req.query;
