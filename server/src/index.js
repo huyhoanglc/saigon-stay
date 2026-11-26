@@ -6,6 +6,9 @@ import roomRoutes from "./routes/room.routes.js";
 import inquiryRoutes from "./routes/inquiry.routes.js";
 import authRoutes from "./routes/auth.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
+import profileRoutes from "./routes/profile.routes.js";
+import User from "./models/User.js";
+import { getAllowedOrigins } from "./utils/origins.js";
 
 // Thiếu khoá ký JWT thì dừng luôn, tránh chạy với cấu hình sai
 if (!process.env.JWT_ACCESS_SECRET || !process.env.JWT_REFRESH_SECRET) {
@@ -16,16 +19,8 @@ if (!process.env.JWT_ACCESS_SECRET || !process.env.JWT_REFRESH_SECRET) {
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-const allowedOrigins = ["http://localhost:5173"];
-if (process.env.CLIENT_URL) {
-  const urls = process.env.CLIENT_URL.split(",");
-  for (const url of urls) {
-    allowedOrigins.push(url.trim());
-  }
-}
-
 // credentials: true để trình duyệt được gửi cookie đăng nhập kèm request
-app.use(cors({ origin: allowedOrigins, credentials: true }));
+app.use(cors({ origin: getAllowedOrigins(), credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
 
@@ -37,6 +32,7 @@ app.use("/api/rooms", roomRoutes);
 app.use("/api/inquiries", inquiryRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/profile", profileRoutes);
 
 // Không có route nào khớp
 app.use((req, res) => {
@@ -72,6 +68,15 @@ app.use((err, req, res, next) => {
 try {
   await mongoose.connect(process.env.MONGODB_URI);
   console.log("✅ Đã kết nối MongoDB");
+
+  // Cập nhật index của User cho khớp với schema
+  // (index email cũ là unique thường, nay đổi sang chỉ unique khi có email vì tài khoản Zalo không có email)
+  try {
+    await User.syncIndexes();
+  } catch (err) {
+    console.error("⚠️ Không đồng bộ được index User:", err.message);
+  }
+
   app.listen(PORT, () => {
     console.log(`🚀 Server: http://localhost:${PORT}`);
   });

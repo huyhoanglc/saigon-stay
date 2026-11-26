@@ -3,7 +3,8 @@ import { Link, Navigate, useNavigate, useSearchParams } from "react-router";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../hooks/useAuth";
 import Container from "../components/Container";
-import { ErrorMessage } from "../components/admin/FormFields";
+import ErrorMessage from "../components/ErrorMessage";
+import SocialLoginButtons from "../components/SocialLoginButtons";
 import { getSafeRedirect } from "../utils/redirect";
 
 const inputClass =
@@ -93,8 +94,12 @@ export default function RegisterPage() {
           {t("auth.registerSubtitle")}
         </p>
 
-        <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+        <div className="mt-6 space-y-4">
           <ErrorMessage message={errorMessage} />
+          <SocialLoginButtons redirect={redirect} />
+        </div>
+
+        <form onSubmit={handleSubmit} className="mt-4 space-y-4">
 
           <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
             {t("auth.name")}

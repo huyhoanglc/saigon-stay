@@ -1,4 +1,4 @@
-import { lazy, Suspense } from "react";
+import { useEffect } from "react";
 import { Routes, Route, Link } from "react-router";
 import { useTranslation } from "react-i18next";
 import Header from "./components/Header";
@@ -10,17 +10,8 @@ import FavoritesPage from "./pages/FavoritesPage";
 import JobsPage from "./pages/JobsPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
-import RequireAdmin from "./components/admin/RequireAdmin";
-
-// Trang admin chỉ tải khi có người vào /admin, khách xem phòng không phải tải phần code này
-const AdminLayout = lazy(() => import("./pages/admin/AdminLayout"));
-const AdminDashboardPage = lazy(() => import("./pages/admin/AdminDashboardPage"));
-const AdminBuildingsPage = lazy(() => import("./pages/admin/AdminBuildingsPage"));
-const AdminBuildingFormPage = lazy(() => import("./pages/admin/AdminBuildingFormPage"));
-const AdminRoomsPage = lazy(() => import("./pages/admin/AdminRoomsPage"));
-const AdminRoomFormPage = lazy(() => import("./pages/admin/AdminRoomFormPage"));
-const AdminInquiriesPage = lazy(() => import("./pages/admin/AdminInquiriesPage"));
-const AdminUsersPage = lazy(() => import("./pages/admin/AdminUsersPage"));
+import ProfilePage from "./pages/ProfilePage";
+import { ADMIN_SITE_URL } from "./utils/sites";
 
 function NotFound() {
   const { t } = useTranslation();
@@ -43,6 +34,21 @@ function NotFound() {
   );
 }
 
+// Trang quản trị đã chuyển sang domain riêng, ai vào /admin thì chuyển sang đó
+function AdminRedirect() {
+  const { t } = useTranslation();
+
+  useEffect(() => {
+    window.location.replace(ADMIN_SITE_URL);
+  }, []);
+
+  return (
+    <p className="py-24 text-center text-slate-500 dark:text-slate-400">
+      {t("common.loading")}
+    </p>
+  );
+}
+
 export default function App() {
   return (
     <div className="min-h-screen bg-stone-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100">
@@ -57,29 +63,8 @@ export default function App() {
           <Route path="/jobs" element={<JobsPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-
-          {/* Mọi trang /admin đều đi qua RequireAdmin */}
-          <Route
-            path="/admin"
-            element={
-              <RequireAdmin>
-                <Suspense fallback={null}>
-                  <AdminLayout />
-                </Suspense>
-              </RequireAdmin>
-            }
-          >
-            <Route index element={<AdminDashboardPage />} />
-            <Route path="buildings" element={<AdminBuildingsPage />} />
-            <Route path="buildings/new" element={<AdminBuildingFormPage />} />
-            <Route path="buildings/:id" element={<AdminBuildingFormPage />} />
-            <Route path="rooms" element={<AdminRoomsPage />} />
-            <Route path="rooms/new" element={<AdminRoomFormPage />} />
-            <Route path="rooms/:id" element={<AdminRoomFormPage />} />
-            <Route path="inquiries" element={<AdminInquiriesPage />} />
-            <Route path="users" element={<AdminUsersPage />} />
-          </Route>
-
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/admin/*" element={<AdminRedirect />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>

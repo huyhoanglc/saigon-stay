@@ -62,6 +62,8 @@ export function AuthProvider({ children }) {
     login: login,
     register: register,
     logout: logout,
+    // Trang profile gọi hàm này sau khi lưu để header cập nhật tên, ảnh ngay
+    setUser: setUser,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -9,7 +9,10 @@ function toAdminUser(user) {
   return {
     id: user._id,
     name: user.name,
-    email: user.email,
+    email: user.email || "",
+    avatar: user.avatar || "",
+    google: Boolean(user.googleId),
+    zalo: Boolean(user.zaloId),
     role: user.role,
     isActive: user.isActive,
     createdAt: user.createdAt,

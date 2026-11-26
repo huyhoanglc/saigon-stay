@@ -13,8 +13,9 @@ import {
   CloseIcon,
   LogOutIcon,
   DashboardIcon,
-  UserIcon,
 } from "./Icons";
+import Avatar from "./Avatar";
+import { ADMIN_SITE_URL } from "../utils/sites";
 
 export default function Header() {
   const { t } = useTranslation();
@@ -108,7 +109,8 @@ export default function Header() {
   }
 
   // Phần tài khoản: chưa đăng nhập thì hiện nút Đăng nhập / Đăng ký,
-  // đã đăng nhập thì hiện tên, link Quản trị (nếu là admin) và nút Đăng xuất
+  // đã đăng nhập thì hiện ảnh đại diện (bấm vào là trang cá nhân),
+  // link Quản trị (nếu là admin, mở sang domain admin) và nút Đăng xuất
   let desktopAccount;
   let mobileAccount;
 
@@ -117,36 +119,40 @@ export default function Header() {
     let mobileAdminLink = null;
     if (user.role === "admin") {
       desktopAdminLink = (
-        <Link
-          to="/admin"
+        <a
+          href={ADMIN_SITE_URL}
           className="hidden items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-emerald-700 transition hover:bg-emerald-50 dark:text-emerald-400 dark:hover:bg-emerald-900/30 sm:inline-flex"
         >
           <DashboardIcon className="h-4 w-4" />
           {t("auth.admin")}
-        </Link>
+        </a>
       );
       mobileAdminLink = (
-        <Link
-          to="/admin"
+        <a
+          href={ADMIN_SITE_URL}
           onClick={handleCloseMenu}
           className="flex items-center gap-2 rounded-lg px-4 py-3 text-sm font-medium text-emerald-700 hover:bg-emerald-50 dark:text-emerald-400 dark:hover:bg-emerald-900/30"
         >
           <DashboardIcon className="h-4 w-4" />
           {t("auth.admin")}
-        </Link>
+        </a>
       );
     }
 
     desktopAccount = (
       <>
         {desktopAdminLink}
-        <span
-          className="hidden max-w-[140px] items-center gap-1.5 truncate text-sm text-slate-600 dark:text-slate-300 xl:inline-flex"
-          title={user.email}
+        <Link
+          to="/profile"
+          className="hidden items-center gap-2 rounded-full py-1 pl-1 pr-1 transition hover:bg-slate-100 dark:hover:bg-slate-800 sm:flex xl:pr-3"
+          aria-label={t("profile.title")}
+          title={t("profile.title")}
         >
-          <UserIcon className="h-4 w-4 shrink-0" />
-          <span className="truncate">{user.name}</span>
-        </span>
+          <Avatar src={user.avatar} name={user.name} className="h-8 w-8 text-sm" />
+          <span className="hidden max-w-30 truncate text-sm text-slate-700 dark:text-slate-200 xl:block">
+            {user.name}
+          </span>
+        </Link>
         <button
           type="button"
           onClick={handleLogout}
@@ -161,10 +167,19 @@ export default function Header() {
 
     mobileAccount = (
       <div className="mt-3 border-t border-slate-200 pt-3 dark:border-slate-800 sm:hidden">
-        <p className="flex items-center gap-2 truncate px-4 py-2 text-sm text-slate-500 dark:text-slate-400">
-          <UserIcon className="h-4 w-4 shrink-0" />
-          <span className="truncate">{user.name}</span>
-        </p>
+        <Link
+          to="/profile"
+          onClick={handleCloseMenu}
+          className="flex items-center gap-3 rounded-lg px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800"
+        >
+          <Avatar src={user.avatar} name={user.name} className="h-8 w-8 text-sm" />
+          <span className="min-w-0">
+            <span className="block truncate">{user.name}</span>
+            <span className="block text-xs font-normal text-slate-500 dark:text-slate-400">
+              {t("profile.title")}
+            </span>
+          </span>
+        </Link>
         {mobileAdminLink}
         <button
           type="button"

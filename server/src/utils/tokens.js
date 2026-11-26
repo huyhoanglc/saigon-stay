@@ -9,7 +9,7 @@ export const REFRESH_COOKIE = "refresh_token";
 // Refresh token chỉ cần gửi tới /api/auth, không cần đi kèm mọi request
 const REFRESH_COOKIE_PATH = "/api/auth";
 
-function getCookieOptions() {
+export function getCookieOptions() {
   let secure = false;
   if (process.env.NODE_ENV === "production") {
     secure = true;

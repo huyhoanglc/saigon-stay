@@ -7,6 +7,7 @@ import {
   clearAuthCookies,
   verifyRefreshToken,
 } from "../utils/tokens.js";
+import { toPublicUser, getPublicUser } from "../utils/publicUser.js";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PASSWORD_MIN = 8;
@@ -22,16 +23,6 @@ const LOCK_MINUTES = 15;
 // Hash giả để so sánh khi email không tồn tại.
 // Nhờ vậy thời gian trả lời giống nhau, kẻ xấu không đoán được email nào có thật.
 const DUMMY_HASH = bcrypt.hashSync("dummy-password", SALT_ROUNDS);
-
-// Chỉ trả về các trường an toàn, không bao giờ có password
-function toPublicUser(user) {
-  return {
-    id: user._id,
-    name: user.name,
-    email: user.email,
-    role: user.role,
-  };
-}
 
 function readString(value) {
   if (typeof value === "string") {
@@ -171,11 +162,21 @@ export async function login(req, res) {
 
   const user = await User.findOne({ email: email }).select("+password");
 
+  // Tài khoản tạo bằng Google/Zalo có thể chưa có mật khẩu
+  let hasPassword = false;
+  if (user && user.password) {
+    hasPassword = true;
+  }
+
   let hashToCompare = DUMMY_HASH;
-  if (user) {
+  if (hasPassword) {
     hashToCompare = user.password;
   }
-  const isMatch = await bcrypt.compare(password, hashToCompare);
+  let isMatch = await bcrypt.compare(password, hashToCompare);
+  // So với hash giả thì luôn tính là sai, kể cả khi ai đó đoán trúng chuỗi giả
+  if (!hasPassword) {
+    isMatch = false;
+  }
 
   if (!user || !isMatch) {
     await recordFailedLogin(email);
@@ -216,7 +217,7 @@ export async function refresh(req, res) {
       .json({ code: "UNAUTHORIZED", message: "Bạn chưa đăng nhập" });
   }
 
-  const user = await User.findById(payload.sub);
+  const user = await User.findById(payload.sub).select("+password");
   if (!user || !user.isActive || user.tokenVersion !== payload.version) {
     clearAuthCookies(res);
     return res
@@ -249,5 +250,6 @@ export async function logout(req, res) {
 
 // GET /api/auth/me  (cần requireAuth chạy trước)
 export async function getMe(req, res) {
-  res.json({ user: toPublicUser(req.user) });
+  const user = await getPublicUser(req.user._id);
+  res.json({ user: user });
 }

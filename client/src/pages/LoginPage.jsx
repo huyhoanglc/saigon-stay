@@ -3,7 +3,8 @@ import { Link, Navigate, useNavigate, useSearchParams } from "react-router";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../hooks/useAuth";
 import Container from "../components/Container";
-import { ErrorMessage } from "../components/admin/FormFields";
+import ErrorMessage from "../components/ErrorMessage";
+import SocialLoginButtons from "../components/SocialLoginButtons";
 import { getSafeRedirect } from "../utils/redirect";
 
 const inputClass =
@@ -19,15 +20,14 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [errorCode, setErrorCode] = useState("");
+  // Lỗi trả về từ đăng nhập Google/Zalo (?error=MA_LOI) thì hiện luôn
+  const [errorCode, setErrorCode] = useState(searchParams.get("error") || "");
 
   // Ai đã đăng nhập thì không cần ở trang này
   if (!loading && user && !submitting) {
     let target = "/";
     if (redirect) {
       target = redirect;
-    } else if (user.role === "admin") {
-      target = "/admin";
     }
     return <Navigate to={target} replace />;
   }
@@ -38,12 +38,10 @@ export default function LoginPage() {
     setErrorCode("");
 
     try {
-      const loggedInUser = await login(email, password);
+      await login(email, password);
       let target = "/";
       if (redirect) {
         target = redirect;
-      } else if (loggedInUser.role === "admin") {
-        target = "/admin";
       }
       navigate(target, { replace: true });
     } catch (err) {
@@ -77,8 +75,12 @@ export default function LoginPage() {
           {t("auth.loginSubtitle")}
         </p>
 
-        <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+        <div className="mt-6 space-y-4">
           <ErrorMessage message={errorMessage} />
+          <SocialLoginButtons redirect={redirect} />
+        </div>
+
+        <form onSubmit={handleSubmit} className="mt-4 space-y-4">
 
           <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
             {t("auth.email")}

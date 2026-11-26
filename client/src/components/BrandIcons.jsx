@@ -6,6 +6,7 @@ import facebookLogo from "../assets/brands/facebook.svg";
 import messengerLogo from "../assets/brands/messenger.svg";
 import whatsappLogo from "../assets/brands/whatsapp.svg";
 import zaloLogo from "../assets/brands/zalo.svg";
+import googleLogo from "../assets/brands/google.svg";
 
 function BrandImage({ src, className }) {
   return (
@@ -33,4 +34,8 @@ export function WhatsappLogo({ className }) {
 
 export function ZaloLogo({ className }) {
   return <BrandImage src={zaloLogo} className={className} />;
+}
+
+export function GoogleLogo({ className }) {
+  return <BrandImage src={googleLogo} className={className} />;
 }

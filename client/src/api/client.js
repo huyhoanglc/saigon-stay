@@ -121,113 +121,54 @@ export async function getMe() {
   return response.data.user;
 }
 
-// ===== Admin =====
-
-export async function getAdminStats() {
-  const response = await api.get("/admin/stats");
-  return response.data;
-}
-
-export async function getAdminBuildings() {
-  const response = await api.get("/admin/buildings");
-  return response.data.items;
-}
-
-export async function getAdminBuilding(id) {
-  const response = await api.get("/admin/buildings/" + id);
-  return response.data;
-}
-
-export async function createBuilding(data) {
-  const response = await api.post("/admin/buildings", data);
-  return response.data;
-}
-
-export async function updateBuilding(id, data) {
-  const response = await api.put("/admin/buildings/" + id, data);
-  return response.data;
-}
-
-export async function deleteBuilding(id) {
-  const response = await api.delete("/admin/buildings/" + id);
-  return response.data;
-}
-
-export async function getAdminRooms(params) {
-  const response = await api.get("/admin/rooms", { params: params });
-  return response.data;
-}
-
-export async function getAdminRoom(id) {
-  const response = await api.get("/admin/rooms/" + id);
-  return response.data;
-}
-
-export async function createRoom(data) {
-  const response = await api.post("/admin/rooms", data);
-  return response.data;
-}
-
-export async function updateRoom(id, data) {
-  const response = await api.put("/admin/rooms/" + id, data);
-  return response.data;
-}
-
-// Đổi nhanh trạng thái hoặc Hot, ví dụ: patchRoom(id, { isHot: true })
-export async function patchRoom(id, changes) {
-  const response = await api.patch("/admin/rooms/" + id, changes);
-  return response.data;
-}
-
-export async function deleteRoom(id) {
-  const response = await api.delete("/admin/rooms/" + id);
-  return response.data;
-}
-
-export async function getAdminInquiries(params) {
-  const response = await api.get("/admin/inquiries", { params: params });
-  return response.data;
-}
-
-export async function updateInquiryStatus(id, status) {
-  const response = await api.patch("/admin/inquiries/" + id, {
-    status: status,
+// Link bắt đầu đăng nhập bằng Google / Zalo (mở bằng thẻ <a>, không gọi bằng axios).
+// mode: "login" (đăng nhập) hoặc "link" (liên kết thêm vào tài khoản đang đăng nhập).
+// Server dùng origin để biết đăng nhập xong thì quay về web nào.
+export function getOAuthStartUrl(provider, mode, redirect) {
+  const params = new URLSearchParams({
+    origin: window.location.origin,
+    mode: mode,
+    redirect: redirect,
   });
-  return response.data;
+  return baseURL + "/auth/" + provider + "/start?" + params.toString();
 }
 
-export async function getAdminUsers(params) {
-  const response = await api.get("/admin/users", { params: params });
-  return response.data;
-}
+// ===== Trang cá nhân =====
 
-// Đổi vai trò hoặc khoá/mở khoá, ví dụ: updateUser(id, { role: "sale" })
-export async function updateUser(id, changes) {
-  const response = await api.patch("/admin/users/" + id, changes);
+// Sửa tên, số điện thoại, ảnh đại diện. Ví dụ: updateProfile({ name: "An" })
+export async function updateProfile(changes) {
+  const response = await api.patch("/profile", changes);
   return response.data.user;
 }
 
-// Nhờ server xoá các ảnh đã upload nhưng không được lưu
-export async function cleanupUploads(urls) {
-  const response = await api.post("/admin/uploads/cleanup", { urls: urls });
-  return response.data;
+// Đổi mật khẩu (hoặc đặt lần đầu nếu tài khoản tạo bằng Google/Zalo)
+export async function changePassword(currentPassword, newPassword) {
+  const response = await api.post("/profile/password", {
+    currentPassword: currentPassword,
+    newPassword: newPassword,
+  });
+  return response.data.user;
 }
 
-// ===== Upload ảnh lên Cloudinary =====
+// Gỡ liên kết Google hoặc Zalo
+export async function unlinkProvider(provider) {
+  const response = await api.delete("/profile/providers/" + provider);
+  return response.data.user;
+}
 
-const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // Gói free của Cloudinary giới hạn 10MB/ảnh
+const MAX_AVATAR_SIZE = 5 * 1024 * 1024;
 
-// Trả về link ảnh (https) sau khi upload xong
-export async function uploadImage(file) {
+// Upload ảnh đại diện lên Cloudinary, trả về link ảnh
+export async function uploadAvatar(file) {
   if (!file.type.startsWith("image/")) {
     throw { code: "FILE_NOT_IMAGE" };
   }
-  if (file.size > MAX_IMAGE_SIZE) {
-    throw { code: "FILE_TOO_LARGE" };
+  if (file.size > MAX_AVATAR_SIZE) {
+    throw { code: "AVATAR_TOO_LARGE" };
   }
 
-  // Bước 1: xin chữ ký từ server (chỉ admin mới xin được)
-  const signResponse = await api.post("/admin/uploads/signature");
+  // Bước 1: xin chữ ký từ server
+  const signResponse = await api.post("/profile/avatar-signature");
   const sign = signResponse.data;
 
   // Bước 2: gửi ảnh thẳng lên Cloudinary kèm chữ ký
