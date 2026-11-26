@@ -7,7 +7,12 @@ import inquiryRoutes from "./routes/inquiry.routes.js";
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors({ origin: "http://localhost:5173" }));
+const allowedOrigins = ["http://localhost:5173"];
+if (process.env.CLIENT_URL) {
+  allowedOrigins.push(process.env.CLIENT_URL);
+}
+
+app.use(cors({ origin: allowedOrigins }));
 app.use(express.json());
 
 app.get("/api/health", (req, res) => {
