@@ -1,15 +1,7 @@
 import { useTranslation } from "react-i18next";
 import PriceRangeSlider from "./PriceRangeSlider";
+import { AREAS, LAYOUTS } from "../utils/constants";
 
-const AREAS = [
-  "Quận 1",
-  "Quận 3",
-  "Quận 7",
-  "Bình Thạnh",
-  "Phú Nhuận",
-  "Thủ Đức",
-];
-const LAYOUTS = ["studio", "duplex", "1br", "2br"];
 const SORTS = ["newest", "price_asc", "price_desc"];
 
 export default function RoomFilters({ filters, onChange, defaults }) {

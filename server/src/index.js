@@ -1,8 +1,17 @@
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 import roomRoutes from "./routes/room.routes.js";
 import inquiryRoutes from "./routes/inquiry.routes.js";
+import authRoutes from "./routes/auth.routes.js";
+import adminRoutes from "./routes/admin.routes.js";
+
+// Thiếu khoá ký JWT thì dừng luôn, tránh chạy với cấu hình sai
+if (!process.env.JWT_ACCESS_SECRET || !process.env.JWT_REFRESH_SECRET) {
+  console.error("❌ Thiếu JWT_ACCESS_SECRET hoặc JWT_REFRESH_SECRET trong .env");
+  process.exit(1);
+}
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -15,8 +24,10 @@ if (process.env.CLIENT_URL) {
   }
 }
 
-app.use(cors({ origin: allowedOrigins }));
+// credentials: true để trình duyệt được gửi cookie đăng nhập kèm request
+app.use(cors({ origin: allowedOrigins, credentials: true }));
 app.use(express.json());
+app.use(cookieParser());
 
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok" });
@@ -24,6 +35,8 @@ app.get("/api/health", (req, res) => {
 
 app.use("/api/rooms", roomRoutes);
 app.use("/api/inquiries", inquiryRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/admin", adminRoutes);
 
 // Không có route nào khớp
 app.use((req, res) => {
@@ -44,6 +57,13 @@ app.use((err, req, res, next) => {
     return res
       .status(400)
       .json({ code: "VALIDATION_ERROR", message: err.message });
+  }
+
+  // Trùng giá trị unique (ví dụ 2 request tạo cùng lúc)
+  if (err.code === 11000) {
+    return res
+      .status(409)
+      .json({ code: "DUPLICATE_KEY", message: "Dữ liệu đã tồn tại" });
   }
 
   res.status(500).json({ code: "UNKNOWN", message: "Lỗi server" });
