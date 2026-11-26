@@ -51,3 +51,4 @@ try {
   console.error("❌ Lỗi kết nối MongoDB:", err.message);
   process.exit(1);
 }
+export default app;
