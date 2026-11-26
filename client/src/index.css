@@ -2,6 +2,11 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+html,
+body {
+  overflow-x: clip;
+}
+
 html {
   background-color: #fafaf9;
 }

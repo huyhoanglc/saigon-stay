@@ -138,7 +138,7 @@ export default function Header() {
           <span className="block text-lg font-bold text-emerald-700 dark:text-emerald-400">
             SaiGon Stay
           </span>
-          <span className="block text-[10px] uppercase tracking-widest text-slate-500 dark:text-slate-400">
+          <span className="hidden text-[10px] uppercase tracking-widest text-slate-500 dark:text-slate-400 sm:block">
             {t("app.slogan")}
           </span>
         </Link>
@@ -162,7 +162,7 @@ export default function Header() {
           <button
             type="button"
             onClick={toggleTheme}
-            className={iconButtonClass}
+            className="relative hidden h-10 w-10 items-center justify-center rounded-full text-slate-600 transition hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800 sm:flex"
             aria-label={themeLabel}
             title={themeLabel}
           >
