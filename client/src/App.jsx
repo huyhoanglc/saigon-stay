@@ -2,7 +2,9 @@ import { Routes, Route, Link } from "react-router";
 import { useTranslation } from "react-i18next";
 import Header from "./components/Header";
 import FloatingButtons from "./components/FloatingButtons";
+import ScrollToTop from "./components/ScrollToTop";
 import HomePage from "./pages/HomePage";
+import RoomDetailPage from "./pages/RoomDetailPage";
 import FavoritesPage from "./pages/FavoritesPage";
 import JobsPage from "./pages/JobsPage";
 
@@ -30,11 +32,13 @@ function NotFound() {
 export default function App() {
   return (
     <div className="min-h-screen bg-stone-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100">
+      <ScrollToTop />
       <Header />
 
       <main>
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/rooms/:id" element={<RoomDetailPage />} />
           <Route path="/favorites" element={<FavoritesPage />} />
           <Route path="/jobs" element={<JobsPage />} />
           <Route path="*" element={<NotFound />} />

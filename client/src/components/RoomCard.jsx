@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import { useFavorites } from "../context/FavoritesContext";
 import { HeartIcon, FireIcon, ZapIcon, DropletIcon } from "./Icons";
 import { formatPrice, formatDate, formatShort } from "../utils/format";
+import { Link } from "react-router";
 
 export default function RoomCard({ room }) {
   const { t, i18n } = useTranslation();
@@ -134,7 +135,11 @@ export default function RoomCard({ room }) {
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg dark:border-slate-800 dark:bg-slate-900">
       {/* Ảnh */}
-      <div className="relative aspect-4/3 overflow-hidden bg-slate-200 dark:bg-slate-800">
+      <Link
+        to={"/rooms/" + room._id}
+        draggable={false}
+        className="relative block aspect-4/3 overflow-hidden bg-slate-200 dark:bg-slate-800"
+      >
         {imageUrl ? (
           <img
             src={imageUrl}
@@ -169,7 +174,7 @@ export default function RoomCard({ room }) {
         <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/60 to-transparent px-3 pb-2 pt-8">
           <span className="text-xs font-medium text-white">{moveInText}</span>
         </div>
-      </div>
+      </Link>
 
       {/* Nội dung */}
       <div className="flex flex-1 flex-col gap-2 p-4">
@@ -184,7 +189,13 @@ export default function RoomCard({ room }) {
         </p>
 
         <h3 className="line-clamp-2 font-bold uppercase leading-snug">
-          {title}
+          <Link
+            to={"/rooms/" + room._id}
+            draggable={false}
+            className="hover:text-emerald-700 dark:hover:text-emerald-400"
+          >
+            {title}
+          </Link>
         </h3>
 
         {feeRow}

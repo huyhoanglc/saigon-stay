@@ -136,3 +136,37 @@ export function DropletIcon({ className }) {
     </BaseIcon>
   );
 }
+
+export function CheckIcon({ className }) {
+  return (
+    <BaseIcon className={className}>
+      <path d="M20 6 9 17l-5-5" />
+    </BaseIcon>
+  );
+}
+
+export function ArrowLeftIcon({ className }) {
+  return (
+    <BaseIcon className={className}>
+      <path d="m12 19-7-7 7-7M19 12H5" />
+    </BaseIcon>
+  );
+}
+
+export function MapPinIcon({ className }) {
+  return (
+    <BaseIcon className={className}>
+      <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0" />
+      <circle cx="12" cy="10" r="3" />
+    </BaseIcon>
+  );
+}
+
+export function CalendarIcon({ className }) {
+  return (
+    <BaseIcon className={className}>
+      <rect x="3" y="4" width="18" height="18" rx="2" />
+      <path d="M16 2v4M8 2v4M3 10h18" />
+    </BaseIcon>
+  );
+}

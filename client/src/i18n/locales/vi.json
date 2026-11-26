@@ -16,12 +16,16 @@
     "light": "Giao diện sáng",
     "dark": "Giao diện tối"
   },
+  "language": {
+    "label": "Ngôn ngữ"
+  },
   "common": {
     "loading": "Đang tải...",
     "retry": "Thử lại",
     "backToTop": "Lên đầu trang",
     "prev": "Trước",
-    "next": "Sau"
+    "next": "Sau",
+    "close": "Đóng"
   },
   "home": {
     "tagline": "Căn hộ dịch vụ · TP.HCM",
@@ -35,7 +39,12 @@
     "INVALID_ID": "ID không hợp lệ",
     "ROOM_NOT_FOUND": "Không tìm thấy phòng",
     "NETWORK_ERROR": "Không kết nối được máy chủ",
-    "UNKNOWN": "Đã có lỗi xảy ra, vui lòng thử lại"
+    "UNKNOWN": "Đã có lỗi xảy ra, vui lòng thử lại",
+    "PHONE_REQUIRED": "Vui lòng nhập số điện thoại",
+    "PHONE_INVALID": "Số điện thoại không hợp lệ",
+    "NAME_TOO_LONG": "Họ tên quá dài (tối đa 100 ký tự)",
+    "NOTE_TOO_LONG": "Ghi chú quá dài (tối đa 1000 ký tự)",
+    "VALIDATION_ERROR": "Dữ liệu không hợp lệ"
   },
   "filters": {
     "area": "Khu vực",
@@ -83,6 +92,101 @@
     "longTerm": "Dài hạn",
     "shortTerm": "Ngắn hạn"
   },
+  "detail": {
+    "back": "Quay lại danh sách",
+    "roomCode": "Mã phòng",
+    "description": "Mô tả",
+    "noDescription": "Chưa có mô tả.",
+    "roomInfo": "Thông tin phòng",
+    "buildingInfo": "Tiện ích tòa nhà",
+    "fees": "Chi phí dịch vụ",
+    "noFees": "Chưa có thông tin chi phí.",
+    "size": "Diện tích",
+    "floor": "Tầng",
+    "groundFloor": "Tầng trệt",
+    "maxOccupants": "Số người tối đa",
+    "people": "{{count}} người",
+    "window": "Cửa sổ",
+    "furniture": "Nội thất",
+    "separateKitchen": "Bếp tách riêng",
+    "privateWasher": "Máy giặt riêng",
+    "deposit": "Tiền cọc",
+    "minLease": "Hợp đồng tối thiểu",
+    "months": "{{count}} tháng",
+    "road": "Đường vào",
+    "parking": "Chỗ để xe",
+    "yes": "Có",
+    "no": "Không",
+    "favoriteAdd": "Quan tâm",
+    "favoriteRemove": "Đã quan tâm",
+    "contactNow": "Yêu cầu tư vấn",
+    "otherRooms": "Phòng khác trong tòa nhà",
+    "notFound": "Phòng này không tồn tại hoặc đã được cho thuê."
+  },
+  "amenity": {
+    "elevator": "Thang máy",
+    "security": "Bảo vệ 24/7",
+    "fireSafety": "Đạt chuẩn PCCC",
+    "pet": "Cho nuôi thú cưng",
+    "freeHours": "Giờ giấc tự do",
+    "deadEnd": "Hẻm cụt",
+    "cleaning": "Dọn phòng {{count}} lần/tuần",
+    "noCleaning": "Dọn phòng"
+  },
+  "parking": {
+    "basement": "Hầm xe",
+    "garage": "Nhà xe",
+    "none": "Không có chỗ để xe"
+  },
+  "window": {
+    "balcony": "Ban công",
+    "outside": "Cửa sổ thoáng",
+    "hallway": "Cửa sổ hành lang",
+    "none": "Không có cửa sổ"
+  },
+  "fee": {
+    "electricity": "Điện",
+    "water": "Nước",
+    "wifi": "Internet",
+    "trash": "Rác",
+    "parking": "Gửi xe",
+    "management": "Phí quản lý"
+  },
+  "estimator": {
+    "title": "Ước tính chi phí mỗi tháng",
+    "people": "Số người ở",
+    "vehicles": "Số xe máy",
+    "electricityUsage": "Điện (kWh/tháng)",
+    "waterUsage": "Nước (m³/người)",
+    "rent": "Tiền phòng",
+    "total": "Tổng ước tính",
+    "statePriceNote": "{{items}} tính theo giá nhà nước, chưa cộng vào tổng.",
+    "disclaimer": "Con số chỉ mang tính tham khảo."
+  },
+  "inquiry": {
+    "title": "Yêu cầu tư vấn về căn hộ này",
+    "subtitle": "Để lại thông tin, đội ngũ tư vấn sẽ liên hệ bạn sớm nhất.",
+    "name": "Họ tên",
+    "namePlaceholder": "Tên của bạn",
+    "phone": "Số điện thoại",
+    "phonePlaceholder": "09xxxxxxxx",
+    "note": "Ghi chú",
+    "notePlaceholder": "Thời gian muốn xem phòng, câu hỏi thêm...",
+    "staffCode": "Mã nhân viên tư vấn (nếu có)",
+    "staffCodePlaceholder": "VD: NV001",
+    "submit": "Gửi yêu cầu tư vấn",
+    "sending": "Đang gửi...",
+    "success": "Đã gửi yêu cầu! Chúng tôi sẽ liên hệ bạn sớm.",
+    "sendAnother": "Gửi yêu cầu khác"
+  },
+  "share": {
+    "title": "Chia sẻ tin đăng",
+    "copyLink": "Sao chép link",
+    "copyContent": "Sao chép nội dung",
+    "copied": "Đã sao chép",
+    "shareMore": "Chia sẻ khác...",
+    "priceLine": "Giá: {{price}}/tháng"
+  },
   "favorites": {
     "title": "Căn hộ bạn quan tâm",
     "empty": "Bạn chưa quan tâm căn hộ nào.",
@@ -121,8 +225,5 @@
   "notFound": {
     "title": "Không tìm thấy trang",
     "back": "Về trang chủ"
-  },
-  "language": {
-    "label": "Ngôn ngữ"
   }
 }

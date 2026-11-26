@@ -8,7 +8,6 @@ export default function FloatingButtons() {
   const { theme, toggleTheme } = useTheme();
   const [showBackToTop, setShowBackToTop] = useState(false);
 
-  // Cuộn xuống quá 400px thì hiện nút "lên đầu trang"
   useEffect(() => {
     function handleScroll() {
       if (window.scrollY > 400) {
@@ -30,8 +29,18 @@ export default function FloatingButtons() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  const buttonClass =
-    "flex h-12 w-12 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-lg transition hover:-translate-y-0.5 hover:shadow-xl dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200";
+  const baseButtonClass =
+    "flex h-12 w-12 items-center justify-center rounded-full transition duration-200 hover:-translate-y-1";
+
+  // Nút lên đầu trang: màu xanh, bóng xanh nhẹ
+  const backToTopClass =
+    baseButtonClass +
+    " bg-emerald-600 text-white shadow-lg shadow-emerald-600/30 ring-4 ring-emerald-600/10 hover:bg-emerald-500 hover:shadow-xl hover:shadow-emerald-500/40";
+
+  // Nút theme: trắng, viền nhẹ
+  const themeButtonClass =
+    baseButtonClass +
+    " border border-slate-200 bg-white text-slate-700 shadow-lg hover:shadow-xl dark:border-slate-700 dark:bg-slate-800 dark:text-amber-300";
 
   let themeIcon;
   let themeLabel;
@@ -49,7 +58,7 @@ export default function FloatingButtons() {
       <button
         type="button"
         onClick={handleBackToTop}
-        className={buttonClass}
+        className={backToTopClass}
         aria-label={t("common.backToTop")}
         title={t("common.backToTop")}
       >
@@ -64,7 +73,7 @@ export default function FloatingButtons() {
       <button
         type="button"
         onClick={toggleTheme}
-        className={buttonClass}
+        className={themeButtonClass}
         aria-label={themeLabel}
         title={themeLabel}
       >

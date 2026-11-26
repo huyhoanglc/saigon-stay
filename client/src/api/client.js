@@ -15,3 +15,8 @@ export const getRooms = (params) =>
   api.get("/rooms", { params }).then((res) => res.data);
 
 export const getRoom = (id) => api.get(`/rooms/${id}`).then((res) => res.data);
+
+export async function createInquiry(data) {
+  const response = await api.post("/inquiries", data);
+  return response.data;
+}

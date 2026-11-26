@@ -10,6 +10,7 @@ const roomSchema = new mongoose.Schema(
 
     code: { type: String, required: true, trim: true },
     title: { type: String, trim: true, maxlength: 150 },
+    description: { type: String, default: "" },
     floor: { type: Number, min: 0 },
 
     layout: {

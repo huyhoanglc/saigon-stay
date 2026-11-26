@@ -16,12 +16,16 @@
     "light": "Light mode",
     "dark": "Dark mode"
   },
+  "language": {
+    "label": "Language"
+  },
   "common": {
     "loading": "Loading...",
     "retry": "Retry",
     "backToTop": "Back to top",
     "prev": "Previous",
-    "next": "Next"
+    "next": "Next",
+    "close": "Close"
   },
   "home": {
     "tagline": "Serviced apartments · Ho Chi Minh City",
@@ -35,7 +39,12 @@
     "INVALID_ID": "Invalid ID",
     "ROOM_NOT_FOUND": "Room not found",
     "NETWORK_ERROR": "Cannot connect to server",
-    "UNKNOWN": "Something went wrong, please try again"
+    "UNKNOWN": "Something went wrong, please try again",
+    "PHONE_REQUIRED": "Please enter your phone number",
+    "PHONE_INVALID": "Invalid phone number",
+    "NAME_TOO_LONG": "Name is too long (max 100 characters)",
+    "NOTE_TOO_LONG": "Note is too long (max 1000 characters)",
+    "VALIDATION_ERROR": "Invalid data"
   },
   "filters": {
     "area": "Area",
@@ -83,6 +92,104 @@
     "longTerm": "Long term",
     "shortTerm": "Short term"
   },
+  "detail": {
+    "back": "Back to listings",
+    "roomCode": "Room",
+    "description": "Description",
+    "noDescription": "No description yet.",
+    "roomInfo": "Room details",
+    "buildingInfo": "Building amenities",
+    "fees": "Service fees",
+    "noFees": "No fee information yet.",
+    "size": "Size",
+    "floor": "Floor",
+    "groundFloor": "Ground floor",
+    "maxOccupants": "Max occupants",
+    "people_one": "{{count}} person",
+    "people_other": "{{count}} people",
+    "window": "Window",
+    "furniture": "Furniture",
+    "separateKitchen": "Separate kitchen",
+    "privateWasher": "Private washer",
+    "deposit": "Deposit",
+    "minLease": "Minimum lease",
+    "months_one": "{{count}} month",
+    "months_other": "{{count}} months",
+    "road": "Access road",
+    "parking": "Parking",
+    "yes": "Yes",
+    "no": "No",
+    "favoriteAdd": "Save",
+    "favoriteRemove": "Saved",
+    "contactNow": "Request a viewing",
+    "otherRooms": "Other rooms in this building",
+    "notFound": "This room does not exist or has been rented."
+  },
+  "amenity": {
+    "elevator": "Elevator",
+    "security": "24/7 security",
+    "fireSafety": "Fire safety certified",
+    "pet": "Pets allowed",
+    "freeHours": "No curfew",
+    "deadEnd": "Dead-end alley",
+    "cleaning_one": "Cleaning {{count}} time/week",
+    "cleaning_other": "Cleaning {{count}} times/week",
+    "noCleaning": "Room cleaning"
+  },
+  "parking": {
+    "basement": "Basement parking",
+    "garage": "Parking garage",
+    "none": "No parking"
+  },
+  "window": {
+    "balcony": "Balcony",
+    "outside": "Outside window",
+    "hallway": "Hallway window",
+    "none": "No window"
+  },
+  "fee": {
+    "electricity": "Electricity",
+    "water": "Water",
+    "wifi": "Internet",
+    "trash": "Trash",
+    "parking": "Parking",
+    "management": "Management fee"
+  },
+  "estimator": {
+    "title": "Estimated monthly cost",
+    "people": "Occupants",
+    "vehicles": "Motorbikes",
+    "electricityUsage": "Electricity (kWh/month)",
+    "waterUsage": "Water (m³/person)",
+    "rent": "Rent",
+    "total": "Estimated total",
+    "statePriceNote": "{{items}} charged at the state rate, not included in the total.",
+    "disclaimer": "For reference only."
+  },
+  "inquiry": {
+    "title": "Ask about this apartment",
+    "subtitle": "Leave your details and our team will contact you shortly.",
+    "name": "Full name",
+    "namePlaceholder": "Your name",
+    "phone": "Phone number",
+    "phonePlaceholder": "09xxxxxxxx",
+    "note": "Note",
+    "notePlaceholder": "Preferred viewing time, other questions...",
+    "staffCode": "Consultant code (if any)",
+    "staffCodePlaceholder": "e.g. NV001",
+    "submit": "Send request",
+    "sending": "Sending...",
+    "success": "Request sent! We will contact you soon.",
+    "sendAnother": "Send another request"
+  },
+  "share": {
+    "title": "Share this listing",
+    "copyLink": "Copy link",
+    "copyContent": "Copy details",
+    "copied": "Copied",
+    "shareMore": "More options...",
+    "priceLine": "Price: {{price}}/month"
+  },
   "favorites": {
     "title": "Saved apartments",
     "empty": "You haven't saved any apartments yet.",
@@ -122,8 +229,5 @@
   "notFound": {
     "title": "Page not found",
     "back": "Back to home"
-  },
-  "language": {
-    "label": "Language"
   }
 }
