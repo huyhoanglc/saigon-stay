@@ -9,7 +9,10 @@ const PORT = process.env.PORT || 5000;
 
 const allowedOrigins = ["http://localhost:5173"];
 if (process.env.CLIENT_URL) {
-  allowedOrigins.push(process.env.CLIENT_URL);
+  const urls = process.env.CLIENT_URL.split(",");
+  for (const url of urls) {
+    allowedOrigins.push(url.trim());
+  }
 }
 
 app.use(cors({ origin: allowedOrigins }));
