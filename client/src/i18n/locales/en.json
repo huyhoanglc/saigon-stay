@@ -1,0 +1,16 @@
+{
+  "app": {
+    "title": "SaiGon Stay",
+    "subtitle": "Serviced apartments in Ho Chi Minh City"
+  },
+  "common": {
+    "loading": "Loading...",
+    "retry": "Retry"
+  },
+  "errors": {
+    "INVALID_ID": "Invalid ID",
+    "ROOM_NOT_FOUND": "Room not found",
+    "NETWORK_ERROR": "Cannot connect to server",
+    "UNKNOWN": "Something went wrong, please try again"
+  }
+}

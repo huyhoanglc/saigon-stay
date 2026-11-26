@@ -1,0 +1,16 @@
+{
+  "app": {
+    "title": "SaiGon Stay",
+    "subtitle": "Căn hộ dịch vụ tại TP.HCM"
+  },
+  "common": {
+    "loading": "Đang tải...",
+    "retry": "Thử lại"
+  },
+  "errors": {
+    "INVALID_ID": "ID không hợp lệ",
+    "ROOM_NOT_FOUND": "Không tìm thấy phòng",
+    "NETWORK_ERROR": "Không kết nối được máy chủ",
+    "UNKNOWN": "Đã có lỗi xảy ra, vui lòng thử lại"
+  }
+}
