@@ -184,10 +184,16 @@
   },
   "share": {
     "title": "Share this listing",
+    "sendPhotos": "Send all photos",
+    "downloadPhotos": "Download all photos",
+    "downloading": "Downloading {{done}}/{{total}}",
+    "preparing": "Preparing photos...",
+    "readyTapAgain": "Photos are ready, tap again to send",
     "copyLink": "Copy link",
     "copyContent": "Copy details",
-    "copied": "Copied",
-    "shareMore": "More options...",
+    "linkCopied": "Link copied",
+    "contentCopied": "Details copied",
+    "pasteHint": "Link copied, paste it into {{app}} to send",
     "priceLine": "Price: {{price}}/month"
   },
   "favorites": {

@@ -181,10 +181,16 @@
   },
   "share": {
     "title": "Chia sẻ tin đăng",
+    "sendPhotos": "Gửi tất cả ảnh",
+    "downloadPhotos": "Tải tất cả ảnh",
+    "downloading": "Đang tải {{done}}/{{total}}",
+    "preparing": "Đang chuẩn bị ảnh...",
+    "readyTapAgain": "Ảnh đã sẵn sàng, bấm lần nữa để gửi",
     "copyLink": "Sao chép link",
     "copyContent": "Sao chép nội dung",
-    "copied": "Đã sao chép",
-    "shareMore": "Chia sẻ khác...",
+    "linkCopied": "Đã sao chép link",
+    "contentCopied": "Đã sao chép nội dung",
+    "pasteHint": "Đã sao chép link, dán vào {{app}} để gửi",
     "priceLine": "Giá: {{price}}/tháng"
   },
   "favorites": {

@@ -1,17 +1,8 @@
 import { useTranslation } from "react-i18next";
+import viFlag from "../assets/flags/vi.svg";
+import enFlag from "../assets/flags/en.svg";
 
-const VI_FLAG =
-  "https://res.cloudinary.com/dwq7yppih/image/upload/v1795686225/Flag_of_Vietnam_hxevyo.webp";
-const EN_FLAG =
-  "https://res.cloudinary.com/dwq7yppih/image/upload/v1795686225/Flag_of_the_United_States_qgdkwt.webp";
-
-function RoundFlag({ src, isUsFlag, className }) {
-  let imageClass = "h-full w-full object-cover";
-  if (isUsFlag) {
-    // Ảnh cờ Mỹ có viền trong suốt nên phóng to thêm
-    imageClass = imageClass + " scale-[1.6]";
-  }
-
+function RoundFlag({ src, className }) {
   return (
     <span
       className={
@@ -19,7 +10,12 @@ function RoundFlag({ src, isUsFlag, className }) {
         className
       }
     >
-      <img src={src} alt="" draggable={false} className={imageClass} />
+      <img
+        src={src}
+        alt=""
+        draggable={false}
+        className="h-full w-full object-cover"
+      />
     </span>
   );
 }
@@ -46,7 +42,6 @@ export default function LanguageSwitcher() {
     pillClass = pillClass + " translate-x-0";
   }
 
-  // Bên đang chọn: chữ đậm, cờ rõ. Bên còn lại: chữ nhạt, cờ mờ
   const activeTextClass = "text-slate-900 dark:text-white";
   const inactiveTextClass = "text-slate-500 dark:text-slate-400";
 
@@ -82,17 +77,17 @@ export default function LanguageSwitcher() {
       onClick={handleToggle}
       aria-label={t("language.label") + ": " + currentLabel}
       title={t("language.label") + ": " + currentLabel}
-      className="relative flex h-9 w-26 shrink-0 items-center rounded-full bg-slate-200 p-1 transition hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600"
+      className="relative flex h-9 w-[104px] shrink-0 items-center rounded-full bg-slate-200 p-1 transition hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600"
     >
       <span className={pillClass} />
 
       <span className={halfClass + " " + viTextClass}>
-        <RoundFlag src={VI_FLAG} isUsFlag={false} className={viFlagClass} />
+        <RoundFlag src={viFlag} className={viFlagClass} />
         VI
       </span>
 
       <span className={halfClass + " " + enTextClass}>
-        <RoundFlag src={EN_FLAG} isUsFlag={true} className={enFlagClass} />
+        <RoundFlag src={enFlag} className={enFlagClass} />
         EN
       </span>
     </button>
