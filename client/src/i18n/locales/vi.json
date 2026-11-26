@@ -268,9 +268,10 @@
     "empty": "Bạn chưa quan tâm căn hộ nào.",
     "browse": "Xem căn hộ cho thuê",
     "clear": "Xoá tất cả",
-    "confirmClear": "Xoá toàn bộ danh sách quan tâm?",
+    "confirmClear": "Tất cả căn hộ bạn đã lưu sẽ bị bỏ khỏi danh sách. Không thể hoàn tác.",
     "add": "Thêm vào quan tâm",
-    "remove": "Bỏ quan tâm"
+    "remove": "Bỏ quan tâm",
+    "clearTitle": "Xoá danh sách quan tâm?"
   },
   "jobs": {
     "title": "Tuyển dụng",
@@ -321,7 +322,9 @@
     "admin": "Quản trị",
     "continueWithGoogle": "Tiếp tục với Google",
     "continueWithZalo": "Tiếp tục với Zalo",
-    "or": "hoặc"
+    "or": "hoặc",
+    "logoutTitle": "Đăng xuất?",
+    "logoutMessage": "Bạn sẽ cần đăng nhập lại để tiếp tục sử dụng tài khoản."
   },
   "userRole": {
     "guest": "Khách",
@@ -355,16 +358,27 @@
     "notLinked": "Chưa liên kết",
     "link": "Liên kết",
     "unlink": "Gỡ liên kết",
-    "confirmUnlink": "Gỡ liên kết {{provider}} khỏi tài khoản?",
+    "confirmUnlink": "Bạn sẽ không đăng nhập bằng {{provider}} được nữa cho tới khi liên kết lại.",
     "linkedSuccess": "Đã liên kết {{provider}}.",
     "provider": {
       "google": "Google",
       "zalo": "Zalo"
-    }
+    },
+    "unlinkTitle": "Gỡ liên kết {{provider}}?",
+    "removeAvatarTitle": "Xoá ảnh đại diện?",
+    "confirmRemoveAvatar": "Ảnh đại diện hiện tại sẽ bị xoá. Bạn có thể tải ảnh mới bất cứ lúc nào."
   },
   "comingSoon": {
     "title": "Tính năng đang được cập nhật",
     "zalo": "Đăng nhập bằng Zalo sẽ sớm có mặt. Trong lúc chờ, bạn có thể đăng nhập bằng Google hoặc email.",
     "ok": "Đã hiểu"
+  },
+  "userMenu": {
+    "label": "Menu tài khoản"
+  },
+  "confirm": {
+    "ok": "Xác nhận",
+    "cancel": "Huỷ",
+    "processing": "Đang xử lý..."
   }
 }

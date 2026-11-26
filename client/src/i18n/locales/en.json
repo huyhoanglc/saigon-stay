@@ -271,9 +271,10 @@
     "empty": "You haven't saved any apartments yet.",
     "browse": "Browse apartments",
     "clear": "Clear all",
-    "confirmClear": "Remove all saved apartments?",
+    "confirmClear": "All apartments you saved will be removed from the list. This cannot be undone.",
     "add": "Save apartment",
-    "remove": "Remove from saved"
+    "remove": "Remove from saved",
+    "clearTitle": "Clear your saved list?"
   },
   "jobs": {
     "title": "Careers",
@@ -326,7 +327,9 @@
     "admin": "Admin",
     "continueWithGoogle": "Continue with Google",
     "continueWithZalo": "Continue with Zalo",
-    "or": "or"
+    "or": "or",
+    "logoutTitle": "Log out?",
+    "logoutMessage": "You will need to sign in again to keep using your account."
   },
   "userRole": {
     "guest": "Guest",
@@ -360,16 +363,27 @@
     "notLinked": "Not linked",
     "link": "Link",
     "unlink": "Unlink",
-    "confirmUnlink": "Unlink {{provider}} from your account?",
+    "confirmUnlink": "You won't be able to sign in with {{provider}} until you link it again.",
     "linkedSuccess": "{{provider}} has been linked.",
     "provider": {
       "google": "Google",
       "zalo": "Zalo"
-    }
+    },
+    "unlinkTitle": "Unlink {{provider}}?",
+    "removeAvatarTitle": "Remove profile picture?",
+    "confirmRemoveAvatar": "Your current profile picture will be removed. You can upload a new one any time."
   },
   "comingSoon": {
     "title": "Coming soon",
     "zalo": "Zalo sign-in will be available soon. In the meantime, you can sign in with Google or email.",
     "ok": "Got it"
+  },
+  "userMenu": {
+    "label": "Account menu"
+  },
+  "confirm": {
+    "ok": "Confirm",
+    "cancel": "Cancel",
+    "processing": "Processing..."
   }
 }

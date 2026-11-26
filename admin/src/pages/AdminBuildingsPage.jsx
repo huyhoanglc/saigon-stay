@@ -11,28 +11,31 @@ import {
 import { ErrorMessage } from "../components/FormFields";
 import { thClass, tdClass, iconButtonClass } from "../components/adminStyles";
 import { PencilIcon, TrashIcon, SparklesIcon } from "../components/Icons";
+import ConfirmDialog from "../components/ConfirmDialog";
+import { useConfirm } from "../hooks/useConfirm";
 
 export default function AdminBuildingsPage() {
   const { t } = useTranslation();
   const [reloadKey, setReloadKey] = useState(0);
   const [actionError, setActionError] = useState("");
   const { buildings, loading, error } = useAdminBuildings(reloadKey);
+  const { askConfirm, dialogProps } = useConfirm();
 
-  async function handleDelete(building) {
-    const ok = window.confirm(
-      t("admin.buildings.confirmDelete", { name: building.name }),
-    );
-    if (!ok) {
-      return;
-    }
-
-    setActionError("");
-    try {
-      await deleteBuilding(building._id);
-      setReloadKey(reloadKey + 1);
-    } catch (err) {
-      setActionError(t("errors." + err.code));
-    }
+  function handleDelete(building) {
+    askConfirm({
+      title: t("admin.buildings.deleteTitle"),
+      message: t("admin.buildings.confirmDelete", { name: building.name }),
+      confirmLabel: t("admin.common.delete"),
+      action: async () => {
+        setActionError("");
+        try {
+          await deleteBuilding(building._id);
+          setReloadKey((key) => key + 1);
+        } catch (err) {
+          setActionError(t("errors." + err.code));
+        }
+      },
+    });
   }
 
   let content;
@@ -139,6 +142,7 @@ export default function AdminBuildingsPage() {
         <ErrorMessage message={actionError} />
         {content}
       </div>
+      <ConfirmDialog {...dialogProps} />
     </div>
   );
 }

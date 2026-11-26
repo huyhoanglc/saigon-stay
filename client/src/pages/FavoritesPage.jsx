@@ -3,16 +3,23 @@ import { useTranslation } from "react-i18next";
 import { useFavorites } from "../context/FavoritesContext";
 import Container from "../components/Container";
 import RoomCard from "../components/RoomCard";
+import ConfirmDialog from "../components/ConfirmDialog";
+import { useConfirm } from "../hooks/useConfirm";
 
 export default function FavoritesPage() {
   const { t } = useTranslation();
   const { favorites, clearFavorites } = useFavorites();
+  const { askConfirm, dialogProps } = useConfirm();
 
   function handleClear() {
-    const confirmed = window.confirm(t("favorites.confirmClear"));
-    if (confirmed) {
-      clearFavorites();
-    }
+    askConfirm({
+      title: t("favorites.clearTitle"),
+      message: t("favorites.confirmClear"),
+      confirmLabel: t("favorites.clear"),
+      action: async () => {
+        clearFavorites();
+      },
+    });
   }
 
   let content;
@@ -63,6 +70,7 @@ export default function FavoritesPage() {
       </div>
 
       {content}
+      <ConfirmDialog {...dialogProps} />
     </Container>
   );
 }

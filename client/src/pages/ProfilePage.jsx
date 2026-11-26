@@ -6,6 +6,8 @@ import Container from "../components/Container";
 import Avatar from "../components/Avatar";
 import ErrorMessage from "../components/ErrorMessage";
 import ComingSoonDialog from "../components/ComingSoonDialog";
+import ConfirmDialog from "../components/ConfirmDialog";
+import { useConfirm } from "../hooks/useConfirm";
 import { ZALO_LOGIN_ENABLED } from "../utils/features";
 import { GoogleLogo, ZaloLogo } from "../components/BrandIcons";
 import { UploadIcon, TrashIcon, CheckIcon } from "../components/Icons";
@@ -64,6 +66,7 @@ function AvatarCard({ user, onUserChange }) {
   const { t } = useTranslation();
   const [busy, setBusy] = useState(false);
   const [errorCode, setErrorCode] = useState("");
+  const { askConfirm, dialogProps } = useConfirm();
 
   async function handleSelectFile(event) {
     const file = event.target.files[0];
@@ -84,16 +87,23 @@ function AvatarCard({ user, onUserChange }) {
     setBusy(false);
   }
 
-  async function handleRemove() {
-    setBusy(true);
-    setErrorCode("");
-    try {
-      const updated = await updateProfile({ avatar: "" });
-      onUserChange(updated);
-    } catch (err) {
-      setErrorCode(err.code);
-    }
-    setBusy(false);
+  function handleRemove() {
+    askConfirm({
+      title: t("profile.removeAvatarTitle"),
+      message: t("profile.confirmRemoveAvatar"),
+      confirmLabel: t("profile.removeAvatar"),
+      action: async () => {
+        setBusy(true);
+        setErrorCode("");
+        try {
+          const updated = await updateProfile({ avatar: "" });
+          onUserChange(updated);
+        } catch (err) {
+          setErrorCode(err.code);
+        }
+        setBusy(false);
+      },
+    });
   }
 
   let uploadText = t("profile.changeAvatar");
@@ -162,6 +172,7 @@ function AvatarCard({ user, onUserChange }) {
       <div className="mt-4">
         <ErrorMessage message={errorMessage} />
       </div>
+      <ConfirmDialog {...dialogProps} />
     </section>
   );
 }
@@ -389,6 +400,7 @@ function ConnectionsCard({ user, onUserChange, initialErrorCode, linkedProvider 
   const { t } = useTranslation();
   const [busy, setBusy] = useState("");
   const [errorCode, setErrorCode] = useState(initialErrorCode);
+  const { askConfirm, dialogProps } = useConfirm();
   const [showComingSoon, setShowComingSoon] = useState(false);
 
   let successMessage = "";
@@ -406,23 +418,24 @@ function ConnectionsCard({ user, onUserChange, initialErrorCode, linkedProvider 
     setShowComingSoon(false);
   }
 
-  async function handleUnlink(provider) {
-    const ok = window.confirm(
-      t("profile.confirmUnlink", { provider: t("profile.provider." + provider) }),
-    );
-    if (!ok) {
-      return;
-    }
-
-    setBusy(provider);
-    setErrorCode("");
-    try {
-      const updated = await unlinkProvider(provider);
-      onUserChange(updated);
-    } catch (err) {
-      setErrorCode(err.code);
-    }
-    setBusy("");
+  function handleUnlink(provider) {
+    const providerName = t("profile.provider." + provider);
+    askConfirm({
+      title: t("profile.unlinkTitle", { provider: providerName }),
+      message: t("profile.confirmUnlink", { provider: providerName }),
+      confirmLabel: t("profile.unlink"),
+      action: async () => {
+        setBusy(provider);
+        setErrorCode("");
+        try {
+          const updated = await unlinkProvider(provider);
+          onUserChange(updated);
+        } catch (err) {
+          setErrorCode(err.code);
+        }
+        setBusy("");
+      },
+    });
   }
 
   const providers = [
@@ -499,6 +512,7 @@ function ConnectionsCard({ user, onUserChange, initialErrorCode, linkedProvider 
         </ul>
       </div>
       <ComingSoonDialog open={showComingSoon} onClose={handleCloseComingSoon} />
+      <ConfirmDialog {...dialogProps} />
     </Card>
   );
 }
@@ -534,7 +548,7 @@ export default function ProfilePage() {
           user={user}
           onUserChange={setUser}
           initialErrorCode={errorFromUrl}
-        linkedProvider={linkedProvider}
+          linkedProvider={linkedProvider}
         />
       </div>
     </Container>

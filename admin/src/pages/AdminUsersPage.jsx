@@ -18,6 +18,8 @@ import {
   iconButtonClass,
 } from "../components/adminStyles";
 import Pagination from "../components/Pagination";
+import ConfirmDialog from "../components/ConfirmDialog";
+import { useConfirm } from "../hooks/useConfirm";
 import { SearchIcon } from "../components/Icons";
 import { USER_ROLES } from "../utils/constants";
 import { formatDate } from "../utils/format";
@@ -27,6 +29,7 @@ export default function AdminUsersPage() {
   const { user: currentUser } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const [reloadKey, setReloadKey] = useState(0);
+  const { askConfirm, dialogProps } = useConfirm();
   const [actionError, setActionError] = useState("");
 
   const role = searchParams.get("role") || "";
@@ -73,33 +76,45 @@ export default function AdminUsersPage() {
     setActionError("");
     try {
       await updateUser(user.id, changes);
-      setReloadKey(reloadKey + 1);
+      setReloadKey((key) => key + 1);
     } catch (err) {
       setActionError(t("errors." + err.code));
     }
   }
 
+  // Đổi vai trò nào cũng hỏi lại, vì người đó sẽ bị đăng xuất.
+  // Ô chọn vẫn giữ vai trò cũ cho tới khi bấm xác nhận (giá trị lấy từ dữ liệu server).
   function handleRoleChange(user, newRole) {
-    // Cấp quyền admin là việc lớn nên hỏi lại cho chắc
+    let message = t("admin.users.confirmRole", {
+      name: user.name,
+      role: t("userRole." + newRole),
+    });
+    // Cấp quyền admin là việc lớn nên nói rõ hơn
     if (newRole === "admin") {
-      const ok = window.confirm(
-        t("admin.users.confirmMakeAdmin", { name: user.name }),
-      );
-      if (!ok) {
-        return;
-      }
+      message = t("admin.users.confirmMakeAdmin", { name: user.name });
     }
-    saveChanges(user, { role: newRole });
+
+    askConfirm({
+      title: t("admin.users.roleTitle"),
+      message: message,
+      confirmLabel: t("admin.users.changeRole"),
+      action: () => saveChanges(user, { role: newRole }),
+    });
   }
 
   function handleToggleActive(user) {
-    if (user.isActive) {
-      const ok = window.confirm(t("admin.users.confirmLock", { name: user.name }));
-      if (!ok) {
-        return;
-      }
+    // Mở khoá thì làm luôn, không cần hỏi
+    if (!user.isActive) {
+      saveChanges(user, { isActive: true });
+      return;
     }
-    saveChanges(user, { isActive: !user.isActive });
+
+    askConfirm({
+      title: t("admin.users.lockTitle"),
+      message: t("admin.users.confirmLock", { name: user.name }),
+      confirmLabel: t("admin.users.lock"),
+      action: () => saveChanges(user, { isActive: false }),
+    });
   }
 
   const roleOptions = [];
@@ -263,6 +278,7 @@ export default function AdminUsersPage() {
         <ErrorMessage message={actionError} />
         {content}
       </div>
+      <ConfirmDialog {...dialogProps} />
     </div>
   );
 }

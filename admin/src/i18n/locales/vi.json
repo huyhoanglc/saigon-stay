@@ -235,7 +235,9 @@
     "admin": "Quản trị",
     "continueWithGoogle": "Tiếp tục với Google",
     "continueWithZalo": "Tiếp tục với Zalo",
-    "or": "hoặc"
+    "or": "hoặc",
+    "logoutTitle": "Đăng xuất?",
+    "logoutMessage": "Bạn sẽ cần đăng nhập lại để tiếp tục sử dụng tài khoản."
   },
   "roomStatus": {
     "available": "Còn trống",
@@ -316,7 +318,8 @@
       "ownerName": "Tên chủ nhà",
       "ownerPhone": "SĐT chủ nhà",
       "managerName": "Tên quản lý",
-      "managerPhone": "SĐT quản lý"
+      "managerPhone": "SĐT quản lý",
+      "deleteTitle": "Xoá tòa nhà?"
     },
     "rooms": {
       "add": "Thêm phòng",
@@ -348,7 +351,8 @@
       "sectionBasic": "Thông tin chung",
       "sectionPricing": "Giá và hợp đồng",
       "sectionStatus": "Trạng thái",
-      "noBuildingYet": "Cần có ít nhất 1 tòa nhà trước khi thêm phòng."
+      "noBuildingYet": "Cần có ít nhất 1 tòa nhà trước khi thêm phòng.",
+      "deleteTitle": "Xoá phòng?"
     },
     "inquiries": {
       "count": "{{count}} yêu cầu",
@@ -390,13 +394,18 @@
       "unlock": "Mở khoá",
       "you": "Bạn",
       "confirmMakeAdmin": "Cấp quyền admin cho {{name}}? Admin có toàn quyền quản trị hệ thống.",
-      "confirmLock": "Khoá tài khoản {{name}}? Người này sẽ bị đăng xuất và không đăng nhập được nữa."
+      "confirmLock": "Khoá tài khoản {{name}}? Người này sẽ bị đăng xuất và không đăng nhập được nữa.",
+      "roleTitle": "Đổi vai trò?",
+      "confirmRole": "Đổi vai trò của {{name}} thành \"{{role}}\"? Người này sẽ bị đăng xuất và nhận quyền mới khi đăng nhập lại.",
+      "changeRole": "Đổi vai trò",
+      "lockTitle": "Khoá tài khoản?"
     },
     "loginTitle": "Đăng nhập quản trị",
     "loginSubtitle": "Chỉ dành cho tài khoản có quyền admin.",
     "account": "Tài khoản của tôi",
     "switchAccount": "Đăng xuất, dùng tài khoản khác",
-    "backToDashboard": "Về trang tổng quan"
+    "backToDashboard": "Về trang tổng quan",
+    "viewSite": "Xem trang khách"
   },
   "userRole": {
     "guest": "Khách",
@@ -407,5 +416,10 @@
     "title": "Tính năng đang được cập nhật",
     "zalo": "Đăng nhập bằng Zalo sẽ sớm có mặt. Trong lúc chờ, bạn có thể đăng nhập bằng Google hoặc email.",
     "ok": "Đã hiểu"
+  },
+  "confirm": {
+    "ok": "Xác nhận",
+    "cancel": "Huỷ",
+    "processing": "Đang xử lý..."
   }
 }

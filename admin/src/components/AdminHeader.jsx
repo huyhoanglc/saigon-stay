@@ -4,18 +4,35 @@ import { useTheme } from "../hooks/useTheme";
 import { useAuth } from "../hooks/useAuth";
 import LanguageSwitcher from "./LanguageSwitcher";
 import Avatar from "./Avatar";
-import { SunIcon, MoonIcon, LogOutIcon, UserIcon } from "./Icons";
+import {
+  SunIcon,
+  MoonIcon,
+  LogOutIcon,
+  UserIcon,
+  ExternalLinkIcon,
+} from "./Icons";
 import { PUBLIC_SITE_URL } from "../utils/sites";
+import ConfirmDialog from "./ConfirmDialog";
+import { useConfirm } from "../hooks/useConfirm";
 
 export default function AdminHeader() {
   const { t } = useTranslation();
   const { theme, toggleTheme } = useTheme();
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const { askConfirm, dialogProps } = useConfirm();
 
-  async function handleLogout() {
-    await logout();
-    navigate("/login");
+  function handleLogout() {
+    askConfirm({
+      title: t("auth.logoutTitle"),
+      message: t("auth.logoutMessage"),
+      confirmLabel: t("auth.logout"),
+      tone: "neutral",
+      action: async () => {
+        await logout();
+        navigate("/login");
+      },
+    });
   }
 
   let themeIcon;
@@ -56,6 +73,20 @@ export default function AdminHeader() {
         </Link>
 
         <div className="ml-auto flex min-w-0 items-center gap-1 sm:gap-2">
+          {/* Mở web khách ở tab mới, trang quản trị vẫn giữ nguyên.
+              Màn hình nhỏ chỉ hiện icon cho gọn. */}
+          <a
+            href={PUBLIC_SITE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex h-10 shrink-0 items-center gap-1.5 rounded-full px-2.5 text-sm font-medium text-emerald-700 transition hover:bg-emerald-50 dark:text-emerald-400 dark:hover:bg-emerald-900/30 lg:px-3"
+            aria-label={t("admin.viewSite")}
+            title={t("admin.viewSite")}
+          >
+            <ExternalLinkIcon className="h-5 w-5" />
+            <span className="hidden lg:inline">{t("admin.viewSite")}</span>
+          </a>
+
           <div className="hidden sm:block">
             <LanguageSwitcher />
           </div>
@@ -93,6 +124,7 @@ export default function AdminHeader() {
           </button>
         </div>
       </div>
+      <ConfirmDialog {...dialogProps} />
     </header>
   );
 }

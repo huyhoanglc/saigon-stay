@@ -240,7 +240,9 @@
     "admin": "Admin",
     "continueWithGoogle": "Continue with Google",
     "continueWithZalo": "Continue with Zalo",
-    "or": "or"
+    "or": "or",
+    "logoutTitle": "Log out?",
+    "logoutMessage": "You will need to sign in again to keep using your account."
   },
   "roomStatus": {
     "available": "Available",
@@ -322,7 +324,8 @@
       "ownerName": "Owner name",
       "ownerPhone": "Owner phone",
       "managerName": "Manager name",
-      "managerPhone": "Manager phone"
+      "managerPhone": "Manager phone",
+      "deleteTitle": "Delete building?"
     },
     "rooms": {
       "add": "Add room",
@@ -354,7 +357,8 @@
       "sectionBasic": "General",
       "sectionPricing": "Price & lease",
       "sectionStatus": "Status",
-      "noBuildingYet": "Add at least one building before adding rooms."
+      "noBuildingYet": "Add at least one building before adding rooms.",
+      "deleteTitle": "Delete room?"
     },
     "inquiries": {
       "count_one": "{{count}} inquiry",
@@ -398,13 +402,18 @@
       "unlock": "Unlock",
       "you": "You",
       "confirmMakeAdmin": "Give {{name}} admin rights? Admins have full control of the system.",
-      "confirmLock": "Lock {{name}}'s account? They will be logged out and can no longer log in."
+      "confirmLock": "Lock {{name}}'s account? They will be logged out and can no longer log in.",
+      "roleTitle": "Change role?",
+      "confirmRole": "Change {{name}}'s role to \"{{role}}\"? They will be logged out and get the new permissions after logging in again.",
+      "changeRole": "Change role",
+      "lockTitle": "Lock account?"
     },
     "loginTitle": "Admin sign in",
     "loginSubtitle": "For admin accounts only.",
     "account": "My account",
     "switchAccount": "Log out and switch account",
-    "backToDashboard": "Back to overview"
+    "backToDashboard": "Back to overview",
+    "viewSite": "View website"
   },
   "userRole": {
     "guest": "Guest",
@@ -415,5 +424,10 @@
     "title": "Coming soon",
     "zalo": "Zalo sign-in will be available soon. In the meantime, you can sign in with Google or email.",
     "ok": "Got it"
+  },
+  "confirm": {
+    "ok": "Confirm",
+    "cancel": "Cancel",
+    "processing": "Processing..."
   }
 }

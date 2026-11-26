@@ -17,6 +17,8 @@ import {
   iconButtonClass,
 } from "../components/adminStyles";
 import Pagination from "../components/Pagination";
+import ConfirmDialog from "../components/ConfirmDialog";
+import { useConfirm } from "../hooks/useConfirm";
 import { PencilIcon, TrashIcon, SearchIcon } from "../components/Icons";
 import { ROOM_STATUSES } from "../utils/constants";
 import { formatPrice } from "../utils/format";
@@ -53,6 +55,7 @@ export default function AdminRoomsPage() {
   const { t, i18n } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
   const [reloadKey, setReloadKey] = useState(0);
+  const { askConfirm, dialogProps } = useConfirm();
   const [actionError, setActionError] = useState("");
 
   // Bộ lọc đọc từ URL
@@ -124,19 +127,21 @@ export default function AdminRoomsPage() {
     }
   }
 
-  async function handleDelete(room) {
-    const ok = window.confirm(t("admin.rooms.confirmDelete", { code: room.code }));
-    if (!ok) {
-      return;
-    }
-
-    setActionError("");
-    try {
-      await deleteRoom(room._id);
-      setReloadKey(reloadKey + 1);
-    } catch (err) {
-      setActionError(t("errors." + err.code));
-    }
+  function handleDelete(room) {
+    askConfirm({
+      title: t("admin.rooms.deleteTitle"),
+      message: t("admin.rooms.confirmDelete", { code: room.code }),
+      confirmLabel: t("admin.common.delete"),
+      action: async () => {
+        setActionError("");
+        try {
+          await deleteRoom(room._id);
+          setReloadKey((key) => key + 1);
+        } catch (err) {
+          setActionError(t("errors." + err.code));
+        }
+      },
+    });
   }
 
   const statusOptions = [];
@@ -333,6 +338,7 @@ export default function AdminRoomsPage() {
         <ErrorMessage message={actionError} />
         {content}
       </div>
+      <ConfirmDialog {...dialogProps} />
     </div>
   );
 }

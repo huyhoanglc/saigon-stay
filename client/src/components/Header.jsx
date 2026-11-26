@@ -15,6 +15,9 @@ import {
   DashboardIcon,
 } from "./Icons";
 import Avatar from "./Avatar";
+import UserMenu from "./UserMenu";
+import ConfirmDialog from "./ConfirmDialog";
+import { useConfirm } from "../hooks/useConfirm";
 import { ADMIN_SITE_URL } from "../utils/sites";
 
 export default function Header() {
@@ -24,11 +27,21 @@ export default function Header() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
+  const { askConfirm, dialogProps } = useConfirm();
 
-  async function handleLogout() {
+  // Dùng chung cho menu dropdown (máy tính) và menu hamburger (điện thoại)
+  function handleLogout() {
     setMenuOpen(false);
-    await logout();
-    navigate("/");
+    askConfirm({
+      title: t("auth.logoutTitle"),
+      message: t("auth.logoutMessage"),
+      confirmLabel: t("auth.logout"),
+      tone: "neutral",
+      action: async () => {
+        await logout();
+        navigate("/");
+      },
+    });
   }
 
   const navItems = [
@@ -108,28 +121,20 @@ export default function Header() {
     menuIcon = <MenuIcon className="h-5 w-5" />;
   }
 
-  // Phần tài khoản: chưa đăng nhập thì hiện nút Đăng nhập / Đăng ký,
-  // đã đăng nhập thì hiện ảnh đại diện (bấm vào là trang cá nhân),
-  // link Quản trị (nếu là admin, mở sang domain admin) và nút Đăng xuất
+  // Phần tài khoản: chưa đăng nhập thì hiện nút Đăng nhập / Đăng ký.
+  // Đã đăng nhập: máy tính dùng menu dropdown (UserMenu),
+  // điện thoại thì các mục nằm trong menu hamburger.
   let desktopAccount;
   let mobileAccount;
 
   if (user) {
-    let desktopAdminLink = null;
     let mobileAdminLink = null;
     if (user.role === "admin") {
-      desktopAdminLink = (
-        <a
-          href={ADMIN_SITE_URL}
-          className="hidden items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-emerald-700 transition hover:bg-emerald-50 dark:text-emerald-400 dark:hover:bg-emerald-900/30 sm:inline-flex"
-        >
-          <DashboardIcon className="h-4 w-4" />
-          {t("auth.admin")}
-        </a>
-      );
       mobileAdminLink = (
         <a
           href={ADMIN_SITE_URL}
+          target="_blank"
+          rel="noopener noreferrer"
           onClick={handleCloseMenu}
           className="flex items-center gap-2 rounded-lg px-4 py-3 text-sm font-medium text-emerald-700 hover:bg-emerald-50 dark:text-emerald-400 dark:hover:bg-emerald-900/30"
         >
@@ -139,31 +144,7 @@ export default function Header() {
       );
     }
 
-    desktopAccount = (
-      <>
-        {desktopAdminLink}
-        <Link
-          to="/profile"
-          className="hidden items-center gap-2 rounded-full py-1 pl-1 pr-1 transition hover:bg-slate-100 dark:hover:bg-slate-800 sm:flex xl:pr-3"
-          aria-label={t("profile.title")}
-          title={t("profile.title")}
-        >
-          <Avatar src={user.avatar} name={user.name} className="h-8 w-8 text-sm" />
-          <span className="hidden max-w-30 truncate text-sm text-slate-700 dark:text-slate-200 xl:block">
-            {user.name}
-          </span>
-        </Link>
-        <button
-          type="button"
-          onClick={handleLogout}
-          className="relative hidden h-10 w-10 items-center justify-center rounded-full text-slate-600 transition hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800 sm:flex"
-          aria-label={t("auth.logout")}
-          title={t("auth.logout")}
-        >
-          <LogOutIcon className="h-5 w-5" />
-        </button>
-      </>
-    );
+    desktopAccount = <UserMenu onLogout={handleLogout} />;
 
     mobileAccount = (
       <div className="mt-3 border-t border-slate-200 pt-3 dark:border-slate-800 sm:hidden">
@@ -320,6 +301,7 @@ export default function Header() {
       </div>
 
       {mobileMenu}
+      <ConfirmDialog {...dialogProps} />
     </header>
   );
 }
