@@ -2,14 +2,15 @@ import mongoose from "mongoose";
 import Building from "./models/Building.js";
 import Room from "./models/Room.js";
 
+const img = (seed) => `https://picsum.photos/seed/${seed}/600/400`;
+
 await mongoose.connect(process.env.MONGODB_URI);
-console.log(" Đã kết nối MongoDB!");
+console.log("✅ Đã kết nối MongoDB");
 
 await Room.deleteMany({});
 await Building.deleteMany({});
 
-// ===== 1. Tạo tòa nhà =====
-const [btBuilding, q1Building] = await Building.insertMany([
+const [dbp, ltt, td] = await Building.insertMany([
   {
     name: "Tòa Điện Biên Phủ",
     address: {
@@ -18,12 +19,13 @@ const [btBuilding, q1Building] = await Building.insertMany([
       ward: "Phường Thạnh Mỹ Tây",
       area: "Bình Thạnh",
     },
-    location: { coordinates: [106.713, 10.803] }, // [kinh độ, vĩ độ]
+    location: { coordinates: [106.713, 10.803] },
     roadType: "car_alley",
     floors: 6,
     hasElevator: true,
     parking: "garage",
     hasSecurity: true,
+    hasFireSafety: true,
     petAllowed: true,
     cleaningPerWeek: 2,
     fees: {
@@ -48,6 +50,7 @@ const [btBuilding, q1Building] = await Building.insertMany([
     hasElevator: true,
     parking: "basement",
     hasSecurity: true,
+    hasFireSafety: true,
     fees: {
       electricity: { pricing: "fixed", amount: 3800, unit: "kwh" },
       water: { pricing: "fixed", amount: 120000, unit: "person" },
@@ -55,79 +58,187 @@ const [btBuilding, q1Building] = await Building.insertMany([
     },
     contact: { managerName: "Anh Long", managerPhone: "0900000002" },
   },
+  {
+    name: "Tòa Thảo Điền",
+    address: {
+      houseNumber: "18",
+      street: "Đường số 10",
+      ward: "Phường An Khánh",
+      area: "Thủ Đức",
+    },
+    location: { coordinates: [106.7325, 10.803] },
+    roadType: "car_alley",
+    isDeadEnd: true,
+    floors: 5,
+    hasElevator: true,
+    parking: "garage",
+    hasSecurity: true,
+    hasFireSafety: true,
+    petAllowed: true,
+    cleaningPerWeek: 1,
+    isNewOpening: true,
+    fees: {
+      electricity: { pricing: "fixed", amount: 4000, unit: "kwh" },
+      water: { pricing: "fixed", amount: 100000, unit: "person" },
+      wifi: { pricing: "fixed", amount: 100000, unit: "room" },
+    },
+    contact: { managerName: "Chị Hà", managerPhone: "0900000003" },
+  },
 ]);
 
-// ===== 2. Tạo phòng, gắn vào tòa nhà bằng _id =====
 await Room.insertMany([
+  // Tòa Điện Biên Phủ
   {
-    building: btBuilding._id,
+    building: dbp._id,
     code: "201",
     floor: 2,
     layout: "studio",
     size: 25,
+    title: "Studio cửa sổ thoáng, gần chợ Bà Chiểu",
     price: 5500000,
     window: "outside",
     commission: 2750000,
+    images: [img("room201")],
   },
   {
-    building: btBuilding._id,
+    building: dbp._id,
     code: "302",
     floor: 3,
     layout: "1br",
     separateKitchen: true,
     size: 35,
+    title: "Căn hộ 1PN tách bếp full công năng, ban công rộng",
     price: 7500000,
+    originalPrice: 8500000,
+    isHot: true,
     window: "balcony",
     privateWasher: true,
+    images: [img("room302")],
   },
   {
-    building: btBuilding._id,
+    building: dbp._id,
+    code: "401",
+    floor: 4,
+    layout: "studio",
+    size: 22,
+    title: "Studio giá tốt cho người đi làm, ở ngắn hạn",
+    price: 4800000,
+    window: "hallway",
+    furniture: "basic",
+    minLeaseMonths: 3,
+    images: [img("room401dbp")],
+  },
+  {
+    building: dbp._id,
     code: "501",
     floor: 5,
     layout: "duplex",
     size: 40,
+    title: "Duplex gác cao, phù hợp 2 người",
     price: 8000000,
     status: "upcoming",
     availableFrom: new Date("2026-12-15"),
+    images: [img("room501")],
   },
+
+  // Tòa Lê Thánh Tôn
   {
-    building: q1Building._id,
+    building: ltt._id,
     code: "401",
     floor: 4,
     layout: "1br",
     size: 38,
+    title: "1PN ban công trung tâm Quận 1, đi bộ ra Bến Thành",
     price: 11000000,
     window: "balcony",
     privateWasher: true,
+    isHot: true,
+    images: [img("room401")],
   },
   {
-    building: q1Building._id,
+    building: ltt._id,
     code: "702",
     floor: 7,
     layout: "2br",
     separateKitchen: true,
     size: 60,
+    title: "2PN tách bếp tầng cao view thành phố",
     price: 16000000,
     maxOccupants: 4,
+    minLeaseMonths: 12,
+    images: [img("room702")],
+  },
+  {
+    building: ltt._id,
+    code: "803",
+    floor: 8,
+    layout: "1br",
+    size: 40,
+    title: "1PN tầng 8 (đã cho thuê)",
+    price: 12000000,
+    status: "rented",
+    images: [img("room803")],
+  },
+
+  // Tòa Thảo Điền (mới khai trương)
+  {
+    building: td._id,
+    code: "101",
+    floor: 1,
+    layout: "studio",
+    size: 28,
+    title: "Studio mới 100% khu Thảo Điền yên tĩnh",
+    price: 6500000,
+    window: "outside",
+    privateWasher: true,
+    images: [img("td101")],
+  },
+  {
+    building: td._id,
+    code: "202",
+    floor: 2,
+    layout: "1br",
+    separateKitchen: true,
+    size: 40,
+    title: "1PN tách bếp ban công xanh mát, mới khai trương",
+    price: 9500000,
+    originalPrice: 10500000,
+    isHot: true,
+    window: "balcony",
+    privateWasher: true,
+    images: [img("td202")],
+  },
+  {
+    building: td._id,
+    code: "301",
+    floor: 3,
+    layout: "duplex",
+    size: 45,
+    title: "Duplex trần cao, cửa sổ lớn đón nắng",
+    price: 9000000,
+    window: "outside",
+    images: [img("td301")],
+  },
+  {
+    building: td._id,
+    code: "402",
+    floor: 4,
+    layout: "2br",
+    separateKitchen: true,
+    size: 65,
+    title: "2PN rộng rãi cho gia đình nhỏ, cho nuôi pet",
+    price: 15000000,
+    maxOccupants: 4,
+    status: "upcoming",
+    availableFrom: new Date("2026-12-20"),
+    window: "balcony",
+    privateWasher: true,
+    images: [img("td402")],
   },
 ]);
 
-console.log("🌱 Đã tạo 2 tòa nhà và 5 phòng");
-
-// ===== 3. Kiểm tra select: false =====
-const asCustomer = await Building.findOne({ name: "Tòa Điện Biên Phủ" });
-console.log("Khách thấy:", asCustomer.address, asCustomer.contact);
-
-const asSale = await Building.findOne({ name: "Tòa Điện Biên Phủ" }).select(
-  "+contact +address.houseNumber",
+console.log(
+  `🌱 Đã tạo ${await Building.countDocuments()} tòa nhà và ${await Room.countDocuments()} phòng`,
 );
-console.log("Sale thấy:", asSale.address, asSale.contact);
-
-// ===== 4. Kiểm tra populate =====
-const room = await Room.findOne({ code: "302" }).populate(
-  "building",
-  "name address.area",
-);
-console.log("Phòng 302 thuộc:", room.building);
 
 await mongoose.disconnect();

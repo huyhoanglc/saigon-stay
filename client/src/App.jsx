@@ -1,36 +1,47 @@
+import { Routes, Route, Link } from "react-router";
 import { useTranslation } from "react-i18next";
+import Header from "./components/Header";
+import FloatingButtons from "./components/FloatingButtons";
+import HomePage from "./pages/HomePage";
+import FavoritesPage from "./pages/FavoritesPage";
+import JobsPage from "./pages/JobsPage";
 
-export default function App() {
-  const { t, i18n } = useTranslation();
+function NotFound() {
+  const { t } = useTranslation();
 
   return (
-    <div className="min-h-screen bg-slate-50 p-8">
-      <div className="mb-4 flex gap-2">
-        <button
-          onClick={() => i18n.changeLanguage("vi")}
-          className={
-            i18n.language === "vi"
-              ? "font-bold text-emerald-700"
-              : "text-slate-500"
-          }
-        >
-          VI
-        </button>
-        <button
-          onClick={() => i18n.changeLanguage("en")}
-          className={
-            i18n.language === "en"
-              ? "font-bold text-emerald-700"
-              : "text-slate-500"
-          }
-        >
-          EN
-        </button>
-      </div>
+    <div className="py-24 text-center">
+      <p className="text-6xl font-bold text-slate-300 dark:text-slate-700">
+        404
+      </p>
+      <p className="mt-2 text-slate-600 dark:text-slate-300">
+        {t("notFound.title")}
+      </p>
+      <Link
+        to="/"
+        className="mt-4 inline-block text-emerald-700 underline dark:text-emerald-400"
+      >
+        {t("notFound.back")}
+      </Link>
+    </div>
+  );
+}
 
-      <h1 className="text-3xl font-bold text-emerald-700">{t("app.title")}</h1>
-      <p className="text-slate-600">{t("app.subtitle")}</p>
-      <p className="mt-4 text-red-600">{t("errors.ROOM_NOT_FOUND")}</p>
+export default function App() {
+  return (
+    <div className="min-h-screen bg-stone-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100">
+      <Header />
+
+      <main>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/favorites" element={<FavoritesPage />} />
+          <Route path="/jobs" element={<JobsPage />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </main>
+
+      <FloatingButtons />
     </div>
   );
 }

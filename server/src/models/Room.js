@@ -9,6 +9,7 @@ const roomSchema = new mongoose.Schema(
     },
 
     code: { type: String, required: true, trim: true },
+    title: { type: String, trim: true, maxlength: 150 },
     floor: { type: Number, min: 0 },
 
     layout: {
@@ -33,6 +34,7 @@ const roomSchema = new mongoose.Schema(
     privateWasher: { type: Boolean, default: false },
 
     price: { type: Number, required: true, min: 0 },
+    originalPrice: { type: Number, min: 0 },
     depositMonths: { type: Number, default: 1 },
     minLeaseMonths: { type: Number, default: 6 },
 
@@ -44,6 +46,7 @@ const roomSchema = new mongoose.Schema(
       default: "available",
     },
     availableFrom: Date,
+    isHot: { type: Boolean, default: false },
 
     images: [String],
   },

@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 
 const feeSchema = new mongoose.Schema(
   {
-    // 'fixed' = giá cố định, 'state' = giá nhà nước
     pricing: { type: String, enum: ["fixed", "state"], default: "fixed" },
     amount: {
       type: Number,
@@ -63,9 +62,11 @@ const buildingSchema = new mongoose.Schema(
       default: "garage",
     },
     hasSecurity: { type: Boolean, default: false },
+    hasFireSafety: { type: Boolean, default: false },
     petAllowed: { type: Boolean, default: false },
     cleaningPerWeek: { type: Number, default: 0 },
     freeHours: { type: Boolean, default: true },
+    isNewOpening: { type: Boolean, default: false },
 
     fees: {
       electricity: feeSchema,

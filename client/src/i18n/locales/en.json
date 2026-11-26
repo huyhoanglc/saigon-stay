@@ -1,16 +1,129 @@
 {
   "app": {
     "title": "SaiGon Stay",
-    "subtitle": "Serviced apartments in Ho Chi Minh City"
+    "subtitle": "Serviced apartments in Ho Chi Minh City",
+    "slogan": "Feel at home anywhere"
+  },
+  "nav": {
+    "rooms": "Apartments",
+    "favorites": "Saved",
+    "jobs": "Careers",
+    "login": "Log in",
+    "register": "Sign up",
+    "menu": "Open menu"
+  },
+  "theme": {
+    "light": "Light mode",
+    "dark": "Dark mode"
   },
   "common": {
     "loading": "Loading...",
-    "retry": "Retry"
+    "retry": "Retry",
+    "backToTop": "Back to top",
+    "prev": "Previous",
+    "next": "Next"
+  },
+  "home": {
+    "tagline": "Serviced apartments · Ho Chi Minh City",
+    "heroTitle": "Find your place, move in today",
+    "hot": "Hot apartments",
+    "newOpening": "Newly opened",
+    "latest": "Recently updated",
+    "all": "All apartments"
   },
   "errors": {
     "INVALID_ID": "Invalid ID",
     "ROOM_NOT_FOUND": "Room not found",
     "NETWORK_ERROR": "Cannot connect to server",
     "UNKNOWN": "Something went wrong, please try again"
+  },
+  "filters": {
+    "area": "Area",
+    "allAreas": "All areas",
+    "layout": "Room type",
+    "allLayouts": "All types",
+    "priceRange": "Price range",
+    "minPrice": "Minimum price",
+    "maxPrice": "Maximum price",
+    "sort": "Sort by",
+    "reset": "Clear filters"
+  },
+  "sort": {
+    "newest": "Newest",
+    "price_asc": "Price: low to high",
+    "price_desc": "Price: high to low"
+  },
+  "pagination": {
+    "prev": "Previous",
+    "next": "Next",
+    "page": "Page {{page}} of {{total}}"
+  },
+  "layout": {
+    "studio": "Studio",
+    "duplex": "Duplex",
+    "1br": "1 bedroom",
+    "2br": "2 bedrooms"
+  },
+  "room": {
+    "perMonth": "/month",
+    "balcony": "Balcony",
+    "washer": "Private washer",
+    "pet": "Pet friendly",
+    "elevator": "Elevator",
+    "availableFrom": "Available from {{date}}",
+    "available": "Available",
+    "upcoming": "Coming soon",
+    "moveInNow": "Move in now",
+    "hot": "Hot",
+    "newOpening": "New 100%",
+    "electricity": "Electricity",
+    "water": "Water",
+    "statePrice": "state rate",
+    "fireSafety": "Fire safety",
+    "longTerm": "Long term",
+    "shortTerm": "Short term"
+  },
+  "favorites": {
+    "title": "Saved apartments",
+    "empty": "You haven't saved any apartments yet.",
+    "browse": "Browse apartments",
+    "clear": "Clear all",
+    "confirmClear": "Remove all saved apartments?",
+    "add": "Save apartment",
+    "remove": "Remove from saved"
+  },
+  "jobs": {
+    "title": "Careers",
+    "comingSoon": "Open positions will be posted soon."
+  },
+  "rooms": {
+    "count_one": "{{count}} room",
+    "count_other": "{{count}} rooms",
+    "empty": "No matching rooms"
+  },
+  "furniture": {
+    "full": "Fully furnished",
+    "basic": "Basic furniture",
+    "empty": "Unfurnished"
+  },
+  "road": {
+    "street_front": "Street front",
+    "car_alley": "Car alley",
+    "motorbike_alley": "Motorbike alley"
+  },
+  "unit": {
+    "kwh": "kWh",
+    "m3": "m³",
+    "person": "person",
+    "room": "room",
+    "vehicle": "vehicle",
+    "month": "month"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "back": "Back to home"
+  },
+  "language": {
+    "label": "Language"
   }
 }

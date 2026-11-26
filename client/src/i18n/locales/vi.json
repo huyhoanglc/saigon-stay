@@ -1,16 +1,128 @@
 {
   "app": {
     "title": "SaiGon Stay",
-    "subtitle": "Căn hộ dịch vụ tại TP.HCM"
+    "subtitle": "Căn hộ dịch vụ tại TP.HCM",
+    "slogan": "Ở đâu cũng như nhà"
+  },
+  "nav": {
+    "rooms": "Căn hộ",
+    "favorites": "Đang quan tâm",
+    "jobs": "Tuyển dụng",
+    "login": "Đăng nhập",
+    "register": "Đăng ký",
+    "menu": "Mở menu"
+  },
+  "theme": {
+    "light": "Giao diện sáng",
+    "dark": "Giao diện tối"
   },
   "common": {
     "loading": "Đang tải...",
-    "retry": "Thử lại"
+    "retry": "Thử lại",
+    "backToTop": "Lên đầu trang",
+    "prev": "Trước",
+    "next": "Sau"
+  },
+  "home": {
+    "tagline": "Căn hộ dịch vụ · TP.HCM",
+    "heroTitle": "Tìm căn hộ ưng ý, dọn vào ở ngay",
+    "hot": "Căn hộ Hot",
+    "newOpening": "Căn hộ mới khai trương",
+    "latest": "Mới cập nhật",
+    "all": "Tất cả căn hộ"
   },
   "errors": {
     "INVALID_ID": "ID không hợp lệ",
     "ROOM_NOT_FOUND": "Không tìm thấy phòng",
     "NETWORK_ERROR": "Không kết nối được máy chủ",
     "UNKNOWN": "Đã có lỗi xảy ra, vui lòng thử lại"
+  },
+  "filters": {
+    "area": "Khu vực",
+    "allAreas": "Tất cả khu vực",
+    "layout": "Loại phòng",
+    "allLayouts": "Tất cả loại",
+    "priceRange": "Khoảng giá",
+    "minPrice": "Giá thấp nhất",
+    "maxPrice": "Giá cao nhất",
+    "sort": "Sắp xếp",
+    "reset": "Xoá bộ lọc"
+  },
+  "sort": {
+    "newest": "Mới nhất",
+    "price_asc": "Giá tăng dần",
+    "price_desc": "Giá giảm dần"
+  },
+  "pagination": {
+    "prev": "Trước",
+    "next": "Tiếp",
+    "page": "Trang {{page}} / {{total}}"
+  },
+  "layout": {
+    "studio": "Studio",
+    "duplex": "Duplex",
+    "1br": "1 phòng ngủ",
+    "2br": "2 phòng ngủ"
+  },
+  "room": {
+    "perMonth": "/tháng",
+    "balcony": "Ban công",
+    "washer": "Máy giặt riêng",
+    "pet": "Cho nuôi pet",
+    "elevator": "Thang máy",
+    "availableFrom": "Trống từ {{date}}",
+    "available": "Còn trống",
+    "upcoming": "Sắp trống",
+    "moveInNow": "Vào ở ngay",
+    "hot": "Hot",
+    "newOpening": "New 100%",
+    "electricity": "Điện",
+    "water": "Nước",
+    "statePrice": "giá nhà nước",
+    "fireSafety": "PCCC",
+    "longTerm": "Dài hạn",
+    "shortTerm": "Ngắn hạn"
+  },
+  "favorites": {
+    "title": "Căn hộ bạn quan tâm",
+    "empty": "Bạn chưa quan tâm căn hộ nào.",
+    "browse": "Xem căn hộ cho thuê",
+    "clear": "Xoá tất cả",
+    "confirmClear": "Xoá toàn bộ danh sách quan tâm?",
+    "add": "Thêm vào quan tâm",
+    "remove": "Bỏ quan tâm"
+  },
+  "jobs": {
+    "title": "Tuyển dụng",
+    "comingSoon": "Các vị trí tuyển dụng sẽ được cập nhật sớm."
+  },
+  "rooms": {
+    "count": "{{count}} phòng",
+    "empty": "Không có phòng phù hợp"
+  },
+  "furniture": {
+    "full": "Nội thất đầy đủ",
+    "basic": "Nội thất cơ bản",
+    "empty": "Nhà trống"
+  },
+  "road": {
+    "street_front": "Mặt tiền",
+    "car_alley": "Hẻm ô tô",
+    "motorbike_alley": "Hẻm xe máy"
+  },
+  "unit": {
+    "kwh": "kWh",
+    "m3": "m³",
+    "person": "người",
+    "room": "phòng",
+    "vehicle": "xe",
+    "month": "tháng"
+  },
+  "notFound": {
+    "title": "Không tìm thấy trang",
+    "back": "Về trang chủ"
+  },
+  "language": {
+    "label": "Ngôn ngữ"
   }
 }
