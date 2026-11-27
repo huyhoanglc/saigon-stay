@@ -8,6 +8,15 @@ import {
   verifyRefreshToken,
 } from "../utils/tokens.js";
 import { toPublicUser, getPublicUser } from "../utils/publicUser.js";
+import {
+  TOKEN_FIELDS,
+  findUserByToken,
+  clearPasswordToken,
+  sendPasswordEmail,
+} from "../utils/passwordToken.js";
+
+// Không gửi lại mail quên mật khẩu cho cùng 1 tài khoản trong vòng 60 giây (chống spam hộp thư)
+const RESET_RESEND_SECONDS = 60;
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PASSWORD_MIN = 8;
@@ -252,4 +261,119 @@ export async function logout(req, res) {
 export async function getMe(req, res) {
   const user = await getPublicUser(req.user._id);
   res.json({ user: user });
+}
+
+// POST /api/auth/forgot-password  body: { email }
+// Luôn trả cùng 1 câu dù email có tồn tại hay không, để không ai dò được email nào có tài khoản.
+export async function forgotPassword(req, res) {
+  let body = req.body;
+  if (!body) {
+    body = {};
+  }
+  const email = readString(body.email).toLowerCase();
+
+  if (email !== "" && email.length <= 254) {
+    const user = await User.findOne({ email: email }).select(TOKEN_FIELDS);
+
+    let canSend = false;
+    if (user && user.isActive) {
+      canSend = true;
+      // Vừa gửi xong thì không gửi tiếp (bấm nhiều lần, hoặc bị kẻ xấu spam)
+      if (user.passwordTokenSentAt) {
+        const secondsAgo = (Date.now() - user.passwordTokenSentAt.getTime()) / 1000;
+        if (secondsAgo < RESET_RESEND_SECONDS) {
+          canSend = false;
+        }
+      }
+    }
+
+    if (canSend) {
+      const mail = await sendPasswordEmail(user, "reset");
+      if (!mail.emailSent) {
+        console.error("Không gửi được mail quên mật khẩu cho " + email + ": " + mail.errorCode);
+      }
+    }
+  }
+
+  res.json({
+    code: "RESET_EMAIL_SENT",
+    message: "Nếu email có tài khoản, chúng tôi đã gửi link đặt lại mật khẩu",
+  });
+}
+
+function sendTokenInvalid(res) {
+  return res.status(400).json({
+    code: "RESET_TOKEN_INVALID",
+    message: "Link không hợp lệ hoặc đã hết hạn",
+  });
+}
+
+// POST /api/auth/reset-password/verify  body: { token }
+// Trang đặt mật khẩu gọi trước để biết link còn dùng được không và chào đúng tên.
+export async function verifyResetToken(req, res) {
+  let token = "";
+  if (req.body && typeof req.body.token === "string") {
+    token = req.body.token;
+  }
+
+  const user = await findUserByToken(token);
+  if (!user || !user.isActive) {
+    return sendTokenInvalid(res);
+  }
+
+  res.json({
+    name: user.name,
+    email: user.email,
+    purpose: user.passwordTokenPurpose,
+  });
+}
+
+// POST /api/auth/reset-password  body: { token, password }
+// Đặt mật khẩu mới bằng link trong email. Xong thì đăng nhập luôn.
+export async function resetPassword(req, res) {
+  let body = req.body;
+  if (!body) {
+    body = {};
+  }
+  let token = "";
+  if (typeof body.token === "string") {
+    token = body.token;
+  }
+  let password = "";
+  if (typeof body.password === "string") {
+    password = body.password;
+  }
+
+  if (password.length < PASSWORD_MIN) {
+    return res
+      .status(400)
+      .json({ code: "PASSWORD_TOO_SHORT", message: "Mật khẩu quá ngắn" });
+  }
+  if (password.length > PASSWORD_MAX) {
+    return res
+      .status(400)
+      .json({ code: "PASSWORD_TOO_LONG", message: "Mật khẩu quá dài" });
+  }
+
+  const user = await findUserByToken(token);
+  if (!user) {
+    return sendTokenInvalid(res);
+  }
+  if (!user.isActive) {
+    return res
+      .status(403)
+      .json({ code: "ACCOUNT_DISABLED", message: "Tài khoản đã bị khoá" });
+  }
+
+  user.password = await bcrypt.hash(password, SALT_ROUNDS);
+  // Link chỉ dùng 1 lần; các phiên đăng nhập cũ (nếu có) bị đăng xuất
+  clearPasswordToken(user);
+  user.tokenVersion = user.tokenVersion + 1;
+  await user.save();
+
+  // Gỡ khoá tạm do nhập sai mật khẩu nhiều lần
+  await LoginAttempt.deleteOne({ email: user.email });
+
+  setAuthCookies(res, user);
+  res.json({ user: toPublicUser(user) });
 }

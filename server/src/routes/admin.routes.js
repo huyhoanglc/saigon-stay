@@ -28,7 +28,7 @@ import {
   listUsers,
   updateUser,
   createStaff,
-  resetUserPassword,
+  sendUserPasswordEmail,
 } from "../controllers/admin.user.controller.js";
 import { importRoHang } from "../controllers/admin.import.controller.js";
 import { listImages, listRoomImages, importImage } from "../controllers/admin.drive.controller.js";
@@ -59,7 +59,7 @@ router.patch("/inquiries/:id", updateInquiryStatus);
 router.get("/users", listUsers);
 router.post("/users", createStaff);
 router.patch("/users/:id", updateUser);
-router.post("/users/:id/reset-password", resetUserPassword);
+router.post("/users/:id/password-email", sendUserPasswordEmail);
 
 router.post("/uploads/signature", createUploadSignature);
 router.post("/uploads/cleanup", cleanupUploads);

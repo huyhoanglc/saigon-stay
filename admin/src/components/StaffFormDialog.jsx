@@ -110,7 +110,7 @@ export default function StaffFormDialog({ open, onClose, onCreated }) {
         />
 
         <p className="text-sm text-slate-500 dark:text-slate-400">
-          {t("admin.users.passwordAutoHint")}
+          {t("admin.users.inviteHint")}
         </p>
 
         <div className="flex flex-col-reverse gap-2 pt-2 sm:flex-row sm:justify-end">

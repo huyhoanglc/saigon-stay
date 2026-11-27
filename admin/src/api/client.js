@@ -273,16 +273,17 @@ export async function updateUser(id, changes) {
   return response.data.user;
 }
 
-// Tạo tài khoản nhân viên. data: { name, email, phone, role, staffCode }
-// Trả về { user, password }. Mật khẩu chỉ có ở đây, server không lưu bản rõ.
+// Tạo tài khoản nhân viên và gửi email mời đặt mật khẩu. data: { name, email, phone, role, staffCode }
+// Trả về { user, emailSent, link?, mailError? } (link chỉ có khi gửi mail lỗi để admin tự gửi)
 export async function createStaff(data) {
   const response = await api.post("/admin/users", data);
   return response.data;
 }
 
-// Tạo mật khẩu mới cho nhân viên quên mật khẩu. Trả về { user, password }
-export async function resetUserPassword(id) {
-  const response = await api.post("/admin/users/" + id + "/reset-password");
+// Gửi email cho nhân viên: chưa kích hoạt thì gửi lại lời mời, đã có mật khẩu thì gửi link đặt lại.
+// Trả về { user, emailSent, purpose, link?, mailError? } (link chỉ có khi gửi mail lỗi)
+export async function sendUserPasswordEmail(id) {
+  const response = await api.post("/admin/users/" + id + "/password-email");
   return response.data;
 }
 

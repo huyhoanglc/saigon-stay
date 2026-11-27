@@ -34,6 +34,13 @@ const userSchema = new mongoose.Schema(
       enum: ["guest", "sale", "admin"],
       default: "guest",
     },
+    // Link đặt mật khẩu (mời nhân viên / quên mật khẩu). Chỉ lưu bản băm của token,
+    // lộ database cũng không dựng lại được link. Ẩn mặc định như password.
+    passwordTokenHash: { type: String, select: false },
+    passwordTokenExpires: { type: Date, select: false },
+    passwordTokenPurpose: { type: String, enum: ["invite", "reset"], select: false },
+    passwordTokenSentAt: { type: Date, select: false },
+
     isActive: { type: Boolean, default: true },
     // Tăng số này lên là mọi token cũ của user hết hiệu lực (dùng khi đăng xuất)
     tokenVersion: { type: Number, default: 0 },
@@ -45,5 +52,6 @@ userSchema.index({ email: 1 }, uniqueWhenSet("email"));
 userSchema.index({ googleId: 1 }, uniqueWhenSet("googleId"));
 userSchema.index({ zaloId: 1 }, uniqueWhenSet("zaloId"));
 userSchema.index({ staffCode: 1 }, uniqueWhenSet("staffCode"));
+userSchema.index({ passwordTokenHash: 1 }, uniqueWhenSet("passwordTokenHash"));
 
 export default mongoose.model("User", userSchema);

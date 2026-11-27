@@ -1,13 +1,8 @@
 import mongoose from "mongoose";
-import bcrypt from "bcryptjs";
 import User from "../models/User.js";
-import LoginAttempt from "../models/LoginAttempt.js";
 import { readString, escapeRegex, readPaging } from "../utils/validate.js";
-import {
-  generatePassword,
-  normalizeStaffCode,
-  saveWithNewStaffCode,
-} from "../utils/staff.js";
+import { normalizeStaffCode, saveWithNewStaffCode } from "../utils/staff.js";
+import { sendPasswordEmail } from "../utils/passwordToken.js";
 
 const ROLES = ["guest", "sale", "admin"];
 // Vai trò của nhân viên (được cấp mã nhân viên)
@@ -15,7 +10,6 @@ const STAFF_ROLES = ["sale", "admin"];
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 // Số di động Việt Nam: 0 hoặc +84, sau đó là đầu 3/5/7/8/9 và 8 số
 const PHONE_REGEX = /^(0|\+84)(3|5|7|8|9)\d{8}$/;
-const SALT_ROUNDS = 10;
 
 function sendError(res, status, code, message) {
   return res.status(status).json({ code: code, message: message });
@@ -31,9 +25,17 @@ async function isStaffCodeTaken(code, excludeId) {
   return Boolean(existing);
 }
 
-// Chỉ trả về các trường an toàn (không có password, tokenVersion)
+// Chỉ trả về các trường an toàn (không có password, tokenVersion).
+// Lưu ý: user phải được lấy kèm .select("+password") thì pendingInvite mới đúng.
 function toAdminUser(user) {
+  // Chờ kích hoạt: chưa đặt mật khẩu và cũng không đăng nhập bằng Google / Zalo
+  let pendingInvite = false;
+  if (!user.password && !user.googleId && !user.zaloId) {
+    pendingInvite = true;
+  }
+
   return {
+    pendingInvite: pendingInvite,
     id: user._id,
     name: user.name,
     email: user.email || "",
@@ -72,6 +74,7 @@ export async function listUsers(req, res) {
 
   const skip = (paging.page - 1) * paging.limit;
   const users = await User.find(filter)
+    .select("+password")
     .sort({ createdAt: -1, _id: -1 })
     .skip(skip)
     .limit(paging.limit);
@@ -164,7 +167,7 @@ export async function updateUser(req, res) {
     }
   }
 
-  const user = await User.findById(id);
+  const user = await User.findById(id).select("+password");
   if (!user) {
     return res
       .status(404)
@@ -205,7 +208,8 @@ export async function updateUser(req, res) {
 }
 
 // POST /api/admin/users  body: { name, email, phone?, role, staffCode? }
-// Admin tạo tài khoản nhân viên. Mật khẩu tự tạo ngẫu nhiên, chỉ trả về đúng 1 lần trong response này.
+// Admin tạo tài khoản nhân viên rồi gửi email mời. Nhân viên bấm link trong email để tự đặt mật khẩu,
+// admin không bao giờ biết mật khẩu. Gửi mail lỗi thì trả link về để admin tự gửi cho nhân viên.
 export async function createStaff(req, res) {
   let body = req.body;
   if (!body) {
@@ -254,13 +258,12 @@ export async function createStaff(req, res) {
     return sendError(res, 409, "EMAIL_EXISTS", "Email đã được sử dụng");
   }
 
-  const password = generatePassword();
+  // Chưa có mật khẩu: nhân viên tự đặt qua link trong email
   const user = new User({
     name: name,
     email: email,
     phone: phone,
     role: body.role,
-    password: await bcrypt.hash(password, SALT_ROUNDS),
   });
 
   if (staffCode) {
@@ -270,44 +273,60 @@ export async function createStaff(req, res) {
     await saveWithNewStaffCode(user);
   }
 
-  res.status(201).json({ user: toAdminUser(user), password: password });
+  const mail = await sendPasswordEmail(user, "invite");
+  res.status(201).json(buildMailResponse(user, mail));
 }
 
-// POST /api/admin/users/:id/reset-password
-// Tạo mật khẩu mới cho nhân viên quên mật khẩu. Người đó bị đăng xuất khỏi mọi thiết bị.
-export async function resetUserPassword(req, res) {
+// Gửi mail thành công thì không trả link (không cần thiết, giữ bí mật).
+// Gửi lỗi thì trả link + mã lỗi để admin biết và tự gửi link cho nhân viên.
+function buildMailResponse(user, mail) {
+  const result = {
+    user: toAdminUser(user),
+    emailSent: mail.emailSent,
+  };
+  if (!mail.emailSent) {
+    result.link = mail.link;
+    result.mailError = mail.errorCode;
+  }
+  return result;
+}
+
+// POST /api/admin/users/:id/password-email
+// Gửi email cho nhân viên: chưa có mật khẩu thì gửi lại lời mời, có rồi thì gửi link đặt lại mật khẩu.
+// Mật khẩu cũ vẫn dùng được cho tới khi nhân viên đặt mật khẩu mới qua link.
+export async function sendUserPasswordEmail(req, res) {
   const id = req.params.id;
   if (!mongoose.isValidObjectId(id)) {
     return sendError(res, 400, "INVALID_ID", "ID không hợp lệ");
   }
 
-  // Mật khẩu của chính mình thì đổi ở trang cá nhân (phải nhập mật khẩu cũ)
+  // Mật khẩu của chính mình thì đổi ở trang cá nhân
   if (String(req.user._id) === id) {
     return sendError(res, 400, "CANNOT_CHANGE_SELF", "Đổi mật khẩu của mình ở trang cá nhân");
   }
 
-  const user = await User.findById(id);
+  const user = await User.findById(id).select("+password");
   if (!user) {
     return sendError(res, 404, "USER_NOT_FOUND", "Không tìm thấy người dùng");
   }
 
-  // Đăng nhập bằng mật khẩu cần email (tài khoản Zalo không có email)
+  // Tài khoản Zalo không có email thì không gửi được
   if (!user.email) {
     return sendError(
       res,
       400,
       "EMAIL_REQUIRED_FOR_PASSWORD",
-      "Tài khoản chưa có email nên chưa đặt được mật khẩu",
+      "Tài khoản chưa có email nên chưa gửi được",
     );
   }
 
-  const password = generatePassword();
-  user.password = await bcrypt.hash(password, SALT_ROUNDS);
-  user.tokenVersion = user.tokenVersion + 1;
-  await user.save();
+  let purpose = "reset";
+  if (!user.password) {
+    purpose = "invite";
+  }
 
-  // Xoá khoá tạm do nhập sai nhiều lần, để nhân viên đăng nhập được ngay
-  await LoginAttempt.deleteOne({ email: user.email });
-
-  res.json({ user: toAdminUser(user), password: password });
+  const mail = await sendPasswordEmail(user, purpose);
+  const result = buildMailResponse(user, mail);
+  result.purpose = purpose;
+  res.json(result);
 }

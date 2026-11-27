@@ -106,6 +106,15 @@ export default function LoginPage() {
             />
           </label>
 
+          <div className="-mt-2 text-right">
+            <Link
+              to="/forgot-password"
+              className="text-sm text-emerald-700 hover:underline dark:text-emerald-400"
+            >
+              {t("auth.forgotPassword")}
+            </Link>
+          </div>
+
           <button
             type="submit"
             disabled={submitting}

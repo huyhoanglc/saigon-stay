@@ -1,10 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import {
-  generatePassword,
-  normalizeStaffCode,
-  nextStaffCode,
-} from "../src/utils/staff.js";
+import { normalizeStaffCode, nextStaffCode } from "../src/utils/staff.js";
 
 test("mã nhân viên tự cấp tăng dần, đủ 3 chữ số", () => {
   assert.equal(nextStaffCode([]), "NV001");
@@ -23,16 +19,4 @@ test("chuẩn hoá mã admin tự nhập", () => {
   assert.equal(normalizeStaffCode("có dấu"), null);
   assert.equal(normalizeStaffCode("NV 01"), null);
   assert.equal(normalizeStaffCode(123), null);
-});
-
-test("mật khẩu ngẫu nhiên 12 ký tự, không có ký tự dễ nhầm", () => {
-  const seen = new Set();
-  for (let i = 0; i < 200; i++) {
-    const password = generatePassword();
-    assert.equal(password.length, 12);
-    assert.match(password, /^[A-HJ-NP-Za-km-z2-9]+$/);
-    seen.add(password);
-  }
-  // 200 lần tạo không được trùng nhau
-  assert.equal(seen.size, 200);
 });

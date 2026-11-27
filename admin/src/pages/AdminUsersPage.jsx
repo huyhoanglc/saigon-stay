@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router";
 import { useTranslation } from "react-i18next";
 import { useAdminUsers } from "../hooks/useAdminUsers";
 import { useAuth } from "../hooks/useAuth";
-import { updateUser, resetUserPassword } from "../api/client";
+import { updateUser, sendUserPasswordEmail } from "../api/client";
 import {
   PageHeader,
   StateMessage,
@@ -21,10 +21,10 @@ import {
 import Pagination from "../components/Pagination";
 import ConfirmDialog from "../components/ConfirmDialog";
 import { useConfirm } from "../hooks/useConfirm";
-import { SearchIcon, PencilIcon, KeyIcon } from "../components/Icons";
+import { SearchIcon, PencilIcon, KeyIcon, MailIcon } from "../components/Icons";
 import StaffFormDialog from "../components/StaffFormDialog";
 import StaffCodeDialog from "../components/StaffCodeDialog";
-import PasswordResultDialog from "../components/PasswordResultDialog";
+import InviteResultDialog from "../components/InviteResultDialog";
 import { USER_ROLES } from "../utils/constants";
 import { formatDate } from "../utils/format";
 
@@ -35,11 +35,10 @@ export default function AdminUsersPage() {
   const [reloadKey, setReloadKey] = useState(0);
   const { askConfirm, dialogProps } = useConfirm();
   const [actionError, setActionError] = useState("");
-  // Popup: thêm nhân viên, sửa mã nhân viên, hiện mật khẩu vừa tạo
+  // Popup: thêm nhân viên, sửa mã nhân viên, kết quả gửi email
   const [showStaffForm, setShowStaffForm] = useState(false);
   const [editingCodeUser, setEditingCodeUser] = useState(null);
-  const [passwordResult, setPasswordResult] = useState(null);
-  const [passwordTitle, setPasswordTitle] = useState("");
+  const [mailResult, setMailResult] = useState(null);
 
   const role = searchParams.get("role") || "";
   const q = searchParams.get("q") || "";
@@ -134,21 +133,27 @@ export default function AdminUsersPage() {
     setShowStaffForm(false);
   }
 
-  // Tạo xong: đóng form, hiện mật khẩu để admin gửi cho nhân viên, tải lại danh sách
-  function handleStaffCreated(result) {
-    setShowStaffForm(false);
-    setPasswordTitle(t("admin.users.staffCreatedTitle"));
-    setPasswordResult({
+  // Kết quả từ server ({ user, emailSent, link?, mailError? }) → dữ liệu cho popup kết quả
+  function toMailResult(title, result) {
+    return {
+      title: title,
       name: result.user.name,
       email: result.user.email,
-      password: result.password,
-      staffCode: result.user.staffCode,
-    });
+      emailSent: result.emailSent,
+      link: result.link,
+      mailError: result.mailError,
+    };
+  }
+
+  // Tạo xong: đóng form, báo đã gửi email mời (hoặc hiện link nếu gửi lỗi), tải lại danh sách
+  function handleStaffCreated(result) {
+    setShowStaffForm(false);
+    setMailResult(toMailResult(t("admin.users.staffCreatedTitle"), result));
     setReloadKey((key) => key + 1);
   }
 
-  function handleClosePassword() {
-    setPasswordResult(null);
+  function handleCloseMailResult() {
+    setMailResult(null);
   }
 
   function handleEditCode(user) {
@@ -164,22 +169,31 @@ export default function AdminUsersPage() {
     setReloadKey((key) => key + 1);
   }
 
-  function handleResetPassword(user) {
+  // Nhân viên chưa kích hoạt: gửi lại lời mời. Đã có mật khẩu: gửi link đặt lại mật khẩu.
+  function handleSendPasswordEmail(user) {
+    let title = t("admin.users.resetTitle");
+    let message = t("admin.users.confirmReset", { name: user.name, email: user.email });
+    let confirmLabel = t("admin.users.sendResetEmail");
+    if (user.pendingInvite) {
+      title = t("admin.users.resendTitle");
+      message = t("admin.users.confirmResend", { name: user.name, email: user.email });
+      confirmLabel = t("admin.users.resendInvite");
+    }
+
     askConfirm({
-      title: t("admin.users.resetTitle"),
-      message: t("admin.users.confirmReset", { name: user.name }),
-      confirmLabel: t("admin.users.resetPassword"),
+      title: title,
+      message: message,
+      confirmLabel: confirmLabel,
+      tone: "neutral",
       action: async () => {
         setActionError("");
         try {
-          const result = await resetUserPassword(user.id);
-          setPasswordTitle(t("admin.users.resetDoneTitle"));
-          setPasswordResult({
-            name: result.user.name,
-            email: result.user.email,
-            password: result.password,
-            staffCode: result.user.staffCode,
-          });
+          const result = await sendUserPasswordEmail(user.id);
+          let resultTitle = t("admin.users.resetSentTitle");
+          if (result.purpose === "invite") {
+            resultTitle = t("admin.users.inviteSentTitle");
+          }
+          setMailResult(toMailResult(resultTitle, result));
         } catch (err) {
           setActionError(t("errors." + err.code));
         }
@@ -285,19 +299,36 @@ export default function AdminUsersPage() {
                 );
               }
 
-              // Đặt lại mật khẩu: không áp dụng cho chính mình, hay tài khoản không có email (Zalo)
+              // Gửi email mật khẩu: không áp dụng cho chính mình, hay tài khoản không có email (Zalo).
+              // Nhân viên chưa kích hoạt thì nút là "Gửi lại lời mời".
               let resetButton = null;
               if (!isSelf && user.email) {
+                let resetLabel = t("admin.users.sendResetEmail");
+                let ResetIcon = KeyIcon;
+                if (user.pendingInvite) {
+                  resetLabel = t("admin.users.resendInvite");
+                  ResetIcon = MailIcon;
+                }
                 resetButton = (
                   <button
                     type="button"
-                    onClick={() => handleResetPassword(user)}
+                    onClick={() => handleSendPasswordEmail(user)}
                     className={iconButtonClass}
-                    aria-label={t("admin.users.resetPassword") + " " + user.name}
-                    title={t("admin.users.resetPassword")}
+                    aria-label={resetLabel + " " + user.name}
+                    title={resetLabel}
                   >
-                    <KeyIcon className="h-4 w-4" />
+                    <ResetIcon className="h-4 w-4" />
                   </button>
+                );
+              }
+
+              // Nhân viên đã tạo nhưng chưa bấm link trong email để đặt mật khẩu
+              let pendingBadge = null;
+              if (user.pendingInvite) {
+                pendingBadge = (
+                  <span className="mt-1 inline-block rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800 dark:bg-amber-900/40 dark:text-amber-300">
+                    {t("admin.users.pendingInvite")}
+                  </span>
                 );
               }
 
@@ -329,7 +360,12 @@ export default function AdminUsersPage() {
                   <td className={tdClass + " whitespace-nowrap text-slate-600 dark:text-slate-300"}>
                     {formatDate(user.createdAt, i18n.language)}
                   </td>
-                  <td className={tdClass}>{statusBadge}</td>
+                  <td className={tdClass}>
+                    <div className="flex flex-col items-start">
+                      {statusBadge}
+                      {pendingBadge}
+                    </div>
+                  </td>
                   <td className={tdClass + " text-right"}>
                     <div className="inline-flex items-center gap-1">
                       {resetButton}
@@ -417,11 +453,7 @@ export default function AdminUsersPage() {
         onClose={handleCloseEditCode}
         onSaved={handleCodeSaved}
       />
-      <PasswordResultDialog
-        result={passwordResult}
-        title={passwordTitle}
-        onClose={handleClosePassword}
-      />
+      <InviteResultDialog result={mailResult} onClose={handleCloseMailResult} />
     </div>
   );
 }

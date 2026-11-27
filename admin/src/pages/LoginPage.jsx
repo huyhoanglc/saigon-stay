@@ -6,6 +6,7 @@ import { ErrorMessage } from "../components/FormFields";
 import SocialLoginButtons from "../components/SocialLoginButtons";
 import LanguageSwitcher from "../components/LanguageSwitcher";
 import { getSafeRedirect } from "../utils/redirect";
+import { PUBLIC_SITE_URL } from "../utils/sites";
 
 const inputClass =
   "mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-800 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100";
@@ -104,6 +105,16 @@ export default function LoginPage() {
               className={inputClass}
             />
           </label>
+
+          {/* Trang quên mật khẩu nằm ở web khách (dùng chung cho mọi tài khoản) */}
+          <div className="-mt-2 text-right">
+            <a
+              href={PUBLIC_SITE_URL + "/forgot-password"}
+              className="text-sm text-emerald-700 hover:underline dark:text-emerald-400"
+            >
+              {t("auth.forgotPassword")}
+            </a>
+          </div>
 
           <button
             type="submit"

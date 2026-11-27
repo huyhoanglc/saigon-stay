@@ -1,4 +1,3 @@
-import crypto from "node:crypto";
 import User from "../models/User.js";
 
 const STAFF_PREFIX = "NV";
@@ -6,20 +5,6 @@ const STAFF_PREFIX = "NV";
 const STAFF_DIGITS = 3;
 // Mã do admin tự đặt: chữ in hoa, số, gạch ngang, gạch dưới, 2-20 ký tự
 const STAFF_CODE_REGEX = /^[A-Z0-9_-]{2,20}$/;
-
-// Bỏ các ký tự dễ nhìn nhầm (0/O, 1/l/I) vì mật khẩu sẽ được đọc / gõ lại bằng tay
-const PASSWORD_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
-const PASSWORD_LENGTH = 12;
-
-// Mật khẩu ngẫu nhiên đủ mạnh. Dùng crypto.randomInt (không dùng Math.random vì đoán được).
-export function generatePassword() {
-  let password = "";
-  for (let i = 0; i < PASSWORD_LENGTH; i++) {
-    const index = crypto.randomInt(PASSWORD_CHARS.length);
-    password = password + PASSWORD_CHARS[index];
-  }
-  return password;
-}
 
 // Chuẩn hoá mã admin nhập: bỏ khoảng trắng, đổi sang chữ in hoa. Trả về null nếu sai định dạng.
 export function normalizeStaffCode(value) {

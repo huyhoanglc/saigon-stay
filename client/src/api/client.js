@@ -121,6 +121,27 @@ export async function getMe() {
   return response.data.user;
 }
 
+// Quên mật khẩu: server luôn trả cùng 1 câu dù email có tồn tại hay không
+export async function forgotPassword(email) {
+  const response = await api.post("/auth/forgot-password", { email: email });
+  return response.data;
+}
+
+// Kiểm tra link đặt mật khẩu còn dùng được không. Trả về { name, email, purpose }
+export async function verifyResetToken(token) {
+  const response = await api.post("/auth/reset-password/verify", { token: token });
+  return response.data;
+}
+
+// Đặt mật khẩu mới bằng link trong email. Xong thì server đăng nhập luôn, trả về user
+export async function resetPassword(token, password) {
+  const response = await api.post("/auth/reset-password", {
+    token: token,
+    password: password,
+  });
+  return response.data.user;
+}
+
 // Link bắt đầu đăng nhập bằng Google / Zalo (mở bằng thẻ <a>, không gọi bằng axios).
 // mode: "login" (đăng nhập) hoặc "link" (liên kết thêm vào tài khoản đang đăng nhập).
 // Server dùng origin để biết đăng nhập xong thì quay về web nào.
