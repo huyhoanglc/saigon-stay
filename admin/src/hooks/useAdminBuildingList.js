@@ -7,6 +7,7 @@ export function useAdminBuildingList(options) {
   // Tách ra từng giá trị đơn để bỏ vào mảng phụ thuộc (không bỏ cả object options)
   const q = options.q;
   const area = options.area;
+  const street = options.street;
   const roadType = options.roadType;
   const needsInfo = options.needsInfo;
   const page = options.page;
@@ -16,6 +17,7 @@ export function useAdminBuildingList(options) {
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [areas, setAreas] = useState([]);
+  const [streets, setStreets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -33,6 +35,9 @@ export function useAdminBuildingList(options) {
       if (area) {
         params.area = area;
       }
+      if (street) {
+        params.street = street;
+      }
       if (roadType) {
         params.roadType = roadType;
       }
@@ -47,6 +52,7 @@ export function useAdminBuildingList(options) {
           setTotal(result.total);
           setTotalPages(result.totalPages);
           setAreas(result.areas);
+          setStreets(result.streets);
         }
       } catch (err) {
         if (!ignore) {
@@ -64,13 +70,14 @@ export function useAdminBuildingList(options) {
     return () => {
       ignore = true;
     };
-  }, [q, area, roadType, needsInfo, page, reloadKey]);
+  }, [q, area, street, roadType, needsInfo, page, reloadKey]);
 
   return {
     buildings: buildings,
     total: total,
     totalPages: totalPages,
     areas: areas,
+    streets: streets,
     loading: loading,
     error: error,
   };

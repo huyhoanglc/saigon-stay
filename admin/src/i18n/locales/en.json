@@ -366,7 +366,8 @@
       "roadTypeMissing": "Not set",
       "searchPlaceholder": "Search name, project code, house number, street...",
       "allAreas": "All areas",
-      "needsInfoOnly": "Only buildings needing info"
+      "needsInfoOnly": "Only buildings needing info",
+      "allStreets": "All streets"
     },
     "rooms": {
       "add": "Add room",

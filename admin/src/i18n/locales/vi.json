@@ -357,7 +357,8 @@
       "roadTypeMissing": "Chưa có thông tin",
       "searchPlaceholder": "Tìm tên, mã dự án, số nhà, tên đường...",
       "allAreas": "Tất cả khu vực",
-      "needsInfoOnly": "Chỉ tòa cần bổ sung"
+      "needsInfoOnly": "Chỉ tòa cần bổ sung",
+      "allStreets": "Tất cả tên đường"
     },
     "rooms": {
       "add": "Thêm phòng",

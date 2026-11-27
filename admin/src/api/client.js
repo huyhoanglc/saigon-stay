@@ -187,8 +187,8 @@ export async function getAdminBuildings() {
   return response.data.items;
 }
 
-// Danh sách tòa nhà có lọc + phân trang. params: { q, area, roadType, needsInfo, page }
-// Trả về { items, total, page, totalPages, areas }
+// Danh sách tòa nhà có lọc + phân trang. params: { q, area, street, roadType, needsInfo, page }
+// Trả về { items, total, page, totalPages, areas, streets }
 export async function getAdminBuildingPage(params) {
   const response = await api.get("/admin/buildings", { params: params });
   return response.data;

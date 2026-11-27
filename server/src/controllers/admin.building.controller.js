@@ -229,6 +229,11 @@ function buildBuildingFilter(query) {
     conditions.push({ "address.area": area });
   }
 
+  const street = readString(query.street);
+  if (street !== "") {
+    conditions.push({ "address.street": street });
+  }
+
   // roadType=none: tòa nhập từ Excel chưa có thông tin đường vào
   if (query.roadType) {
     if (query.roadType === "none") {
@@ -261,7 +266,7 @@ function buildBuildingFilter(query) {
 // GET /api/admin/buildings
 // - Không gửi page: trả về tất cả (dùng cho ô chọn tòa nhà ở trang Phòng)
 // - Có page: lọc + phân trang (trang danh sách Tòa nhà)
-//   Query: q, area, roadType (street_front | car_alley | motorbike_alley | none), needsInfo=true, page, limit
+//   Query: q, area, street, roadType (street_front | car_alley | motorbike_alley | none), needsInfo=true, page, limit
 export async function listBuildings(req, res) {
   const query = req.query;
 
@@ -293,12 +298,22 @@ export async function listBuildings(req, res) {
   const areas = await Building.distinct("address.area");
   areas.sort((a, b) => a.localeCompare(b, "vi"));
 
+  // Danh sách tên đường: đã chọn khu vực thì chỉ lấy đường trong khu vực đó
+  const streetFilter = {};
+  const selectedArea = readString(query.area);
+  if (selectedArea !== "") {
+    streetFilter["address.area"] = selectedArea;
+  }
+  const streets = await Building.distinct("address.street", streetFilter);
+  streets.sort((a, b) => a.localeCompare(b, "vi"));
+
   res.json({
     items: items,
     total: total,
     page: paging.page,
     totalPages: Math.ceil(total / paging.limit),
     areas: areas,
+    streets: streets,
   });
 }
 

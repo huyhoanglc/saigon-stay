@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router";
 import { useTranslation } from "react-i18next";
 import { useAdminBuildingList } from "../hooks/useAdminBuildingList";
@@ -27,6 +27,9 @@ import { ROAD_TYPES } from "../utils/constants";
 import ConfirmDialog from "../components/ConfirmDialog";
 import { useConfirm } from "../hooks/useConfirm";
 
+// Ngừng gõ bao lâu thì mới tìm (mili giây)
+const SEARCH_DELAY_MS = 400;
+
 export default function AdminBuildingsPage() {
   const { t } = useTranslation();
   const [reloadKey, setReloadKey] = useState(0);
@@ -36,6 +39,7 @@ export default function AdminBuildingsPage() {
   // Bộ lọc lưu trên URL: F5 không mất, gửi link cho người khác vẫn đúng bộ lọc
   const q = searchParams.get("q") || "";
   const area = searchParams.get("area") || "";
+  const street = searchParams.get("street") || "";
   const roadType = searchParams.get("roadType") || "";
   const needsInfo = searchParams.get("needsInfo") === "true";
   let page = Number(searchParams.get("page"));
@@ -44,23 +48,51 @@ export default function AdminBuildingsPage() {
   }
 
   let hasFilter = false;
-  if (q !== "" || area !== "" || roadType !== "" || needsInfo) {
+  if (q !== "" || area !== "" || street !== "" || roadType !== "" || needsInfo) {
     hasFilter = true;
   }
 
-  // Ô tìm kiếm chỉ áp dụng khi bấm Enter / nút tìm, không gọi API mỗi lần gõ phím
+  // Chữ đang gõ trong ô tìm kiếm. Khác với q (đang dùng để lọc) cho tới khi ngừng gõ.
   const [keyword, setKeyword] = useState(q);
 
-  const { buildings, total, totalPages, areas, loading, error } =
+  const { buildings, total, totalPages, areas, streets, loading, error } =
     useAdminBuildingList({
       q: q,
       area: area,
+      street: street,
       roadType: roadType,
       needsInfo: needsInfo,
       page: page,
       reloadKey: reloadKey,
     });
   const { askConfirm, dialogProps } = useConfirm();
+
+  // Tìm khi đang gõ: ngừng gõ 0.4 giây mới đưa từ khoá lên URL (để hook gọi API).
+  // Gõ tiếp trước 0.4 giây thì huỷ hẹn giờ cũ → gõ cả chữ dài cũng chỉ gọi server 1-2 lần.
+  useEffect(() => {
+    const trimmed = keyword.trim();
+    if (trimmed === q) {
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      // Dạng hàm: lấy URL mới nhất, không ghi đè bộ lọc khác vừa đổi trong lúc chờ
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev);
+        if (trimmed) {
+          next.set("q", trimmed);
+        } else {
+          next.delete("q");
+        }
+        next.delete("page");
+        return next;
+      });
+    }, SEARCH_DELAY_MS);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [keyword, q, setSearchParams]);
 
   // Cập nhật 1 tham số trên URL, đổi bộ lọc thì quay về trang 1
   function updateParam(name, value) {
@@ -78,6 +110,19 @@ export default function AdminBuildingsPage() {
 
   function handleFilterChange(event) {
     updateParam(event.target.name, event.target.value);
+  }
+
+  // Đổi khu vực thì bỏ chọn tên đường, vì đường cũ có thể không thuộc khu vực mới
+  function handleAreaChange(event) {
+    const next = new URLSearchParams(searchParams);
+    if (event.target.value) {
+      next.set("area", event.target.value);
+    } else {
+      next.delete("area");
+    }
+    next.delete("street");
+    next.delete("page");
+    setSearchParams(next);
   }
 
   function handleNeedsInfoChange(event) {
@@ -134,8 +179,15 @@ export default function AdminBuildingsPage() {
     });
   }
 
+  // Chỉ hiện "Đang tải" ở lần đầu. Những lần sau (đang gõ tìm, đổi bộ lọc) vẫn giữ bảng cũ
+  // và làm mờ đi, để danh sách không bị nháy sau mỗi phím gõ.
+  let isFirstLoad = false;
+  if (loading && buildings.length === 0) {
+    isFirstLoad = true;
+  }
+
   let content;
-  if (loading) {
+  if (isFirstLoad) {
     content = <StateMessage>{t("common.loading")}</StateMessage>;
   } else if (error) {
     content = <StateMessage isError>{t("errors." + error.code)}</StateMessage>;
@@ -255,8 +307,14 @@ export default function AdminBuildingsPage() {
     content = <StateMessage>{t("admin.buildings.noMatch")}</StateMessage>;
   }
 
+  // Đang tải kết quả mới (không phải lần đầu) → làm mờ bảng cũ
+  let contentClass = "transition-opacity";
+  if (loading && !isFirstLoad) {
+    contentClass = contentClass + " pointer-events-none opacity-60";
+  }
+
   let pagination = null;
-  if (!loading && !error && buildings.length > 0) {
+  if (!isFirstLoad && !error && buildings.length > 0) {
     pagination = (
       <Pagination page={page} totalPages={totalPages} onChange={handlePageChange} />
     );
@@ -318,12 +376,28 @@ export default function AdminBuildingsPage() {
         <select
           name="area"
           value={area}
-          onChange={handleFilterChange}
+          onChange={handleAreaChange}
           aria-label={t("admin.buildings.area")}
           className={smallSelectClass + " py-2"}
         >
           <option value="">{t("admin.buildings.allAreas")}</option>
           {areas.map((item) => (
+            <option key={item} value={item}>
+              {item}
+            </option>
+          ))}
+        </select>
+
+        {/* Tên đường: đã chọn khu vực thì server chỉ trả các đường trong khu vực đó */}
+        <select
+          name="street"
+          value={street}
+          onChange={handleFilterChange}
+          aria-label={t("admin.buildings.street")}
+          className={smallSelectClass + " max-w-full py-2 sm:max-w-56"}
+        >
+          <option value="">{t("admin.buildings.allStreets")}</option>
+          {streets.map((item) => (
             <option key={item} value={item}>
               {item}
             </option>
@@ -359,7 +433,9 @@ export default function AdminBuildingsPage() {
 
       <div className="space-y-4">
         <ErrorMessage message={actionError} />
-        {content}
+        <div className={contentClass} aria-busy={loading}>
+          {content}
+        </div>
         {pagination}
       </div>
       <ConfirmDialog {...dialogProps} />
