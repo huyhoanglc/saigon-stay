@@ -43,8 +43,32 @@ export function createRefreshToken(user) {
   });
 }
 
-export function setAuthCookies(res, user) {
+// Domain chung cho cookie đăng nhập, vd ".saigonstay.huyhoanggia.id.vn".
+// Có giá trị này thì web khách (saigonstay.huyhoanggia.id.vn) và web admin (admin.saigonstay.huyhoanggia.id.vn)
+// dùng chung 1 phiên: đăng nhập bên này, sang bên kia không phải đăng nhập lại.
+// Để trống (lúc dev) thì cookie chỉ thuộc về host hiện tại, localhost khác cổng vẫn dùng chung.
+function getAuthCookieOptions() {
   const options = getCookieOptions();
+  if (process.env.COOKIE_DOMAIN) {
+    options.domain = process.env.COOKIE_DOMAIN;
+  }
+  return options;
+}
+
+// Xoá cookie cũ kiểu chỉ thuộc 1 host (đặt trước khi có COOKIE_DOMAIN),
+// nếu không trình duyệt sẽ gửi kèm cả 2 bản và server có thể đọc nhầm bản cũ.
+function clearHostOnlyCookies(res) {
+  if (!process.env.COOKIE_DOMAIN) {
+    return;
+  }
+  const options = getCookieOptions();
+  res.clearCookie(ACCESS_COOKIE, { ...options, path: "/" });
+  res.clearCookie(REFRESH_COOKIE, { ...options, path: REFRESH_COOKIE_PATH });
+}
+
+export function setAuthCookies(res, user) {
+  clearHostOnlyCookies(res);
+  const options = getAuthCookieOptions();
 
   res.cookie(ACCESS_COOKIE, createAccessToken(user), {
     ...options,
@@ -60,7 +84,8 @@ export function setAuthCookies(res, user) {
 }
 
 export function clearAuthCookies(res) {
-  const options = getCookieOptions();
+  clearHostOnlyCookies(res);
+  const options = getAuthCookieOptions();
 
   res.clearCookie(ACCESS_COOKIE, { ...options, path: "/" });
   res.clearCookie(REFRESH_COOKIE, { ...options, path: REFRESH_COOKIE_PATH });
