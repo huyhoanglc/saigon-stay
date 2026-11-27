@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { importRoHang } from "../api/client";
 import { PageHeader } from "../components/AdminUI";
 import { ErrorMessage } from "../components/FormFields";
+import ImportPreview from "../components/ImportPreview";
 import { thClass, tdClass } from "../components/adminStyles";
 import { UploadIcon, CheckIcon, AlertIcon } from "../components/Icons";
 
@@ -261,6 +262,8 @@ export default function AdminImportPage() {
           </p>
           {action}
         </section>
+
+        {result.projects ? <ImportPreview projects={result.projects} /> : null}
 
         <section className={cardClass + " space-y-4"}>
           <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">

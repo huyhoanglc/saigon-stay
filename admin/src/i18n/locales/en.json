@@ -486,7 +486,23 @@
       "viewHiddenRooms": "View hidden rooms",
       "wardsFromDrive": "Found wards for {{count}} buildings from Drive folders (only filled where empty).",
       "wardsFilled": "Filled the ward for {{count}} buildings.",
-      "driveNotChecked": "Drive photo folders were not checked (GOOGLE_API_KEY / GOOGLE_DRIVE_ROOT not configured)."
+      "driveNotChecked": "Drive photo folders were not checked (GOOGLE_API_KEY / GOOGLE_DRIVE_ROOT not configured).",
+      "preview": {
+        "title": "Data to import ({{count}} projects)",
+        "hint": "Click a project to see the building info and its rooms. Room codes outlined in green are new; grey ones already exist and will be updated.",
+        "search": "Search project code, street, room code...",
+        "noMatch": "No matching projects.",
+        "new": "New",
+        "update": "Update",
+        "elevator": "Elevator",
+        "stairs": "Stairs",
+        "stairsOrElevator": "Stairs / elevator",
+        "showPolicy": "Show policy",
+        "noRooms": "This project has no rows in sheet MÃ PHÒNG.",
+        "price": "Rent",
+        "window": "Window",
+        "imageFolder": "Photo folder"
+      }
     }
   },
   "userRole": {

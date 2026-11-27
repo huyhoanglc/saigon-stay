@@ -38,17 +38,21 @@ export async function applyRoHang(projects, commit) {
     wardsFromDrive: projects.filter((project) => project.driveWard).length,
   };
 
+  // Ghi luôn vào từng dự án / nhóm phòng để trang xem trước hiện được "mới" hay "cập nhật"
   for (const project of projects) {
     const buildingId = buildingIdByCode[project.projectCode];
+    project.exists = Boolean(buildingId);
     if (buildingId) {
       summary.buildingsUpdated++;
     } else {
       summary.buildingsCreated++;
     }
     for (const group of project.rooms) {
+      group.existingCodes = [];
       for (const code of group.roomCodes) {
         if (buildingId && existingRoomKeys.has(String(buildingId) + "|" + code)) {
           summary.roomsUpdated++;
+          group.existingCodes.push(code);
         } else {
           summary.roomsCreated++;
         }

@@ -478,7 +478,23 @@
       "viewHiddenRooms": "Xem phòng đang ẩn",
       "wardsFromDrive": "Lấy được phường cho {{count}} tòa từ thư mục Drive (chỉ điền cho tòa đang trống phường).",
       "wardsFilled": "Đã điền phường cho {{count}} tòa.",
-      "driveNotChecked": "Chưa đối chiếu thư mục ảnh trên Drive (server chưa cấu hình GOOGLE_API_KEY / GOOGLE_DRIVE_ROOT)."
+      "driveNotChecked": "Chưa đối chiếu thư mục ảnh trên Drive (server chưa cấu hình GOOGLE_API_KEY / GOOGLE_DRIVE_ROOT).",
+      "preview": {
+        "title": "Dữ liệu sẽ nhập ({{count}} dự án)",
+        "hint": "Bấm vào từng dự án để xem thông tin tòa nhà và các phòng. Mã phòng viền xanh là phòng mới, viền xám là phòng đã có (sẽ cập nhật).",
+        "search": "Tìm mã dự án, tên đường, mã phòng...",
+        "noMatch": "Không có dự án nào khớp.",
+        "new": "Mới",
+        "update": "Cập nhật",
+        "elevator": "Thang máy",
+        "stairs": "Thang bộ",
+        "stairsOrElevator": "Thang bộ / máy",
+        "showPolicy": "Xem chính sách",
+        "noRooms": "Dự án này chưa có dòng nào trong sheet MÃ PHÒNG.",
+        "price": "Giá thuê",
+        "window": "Cửa sổ",
+        "imageFolder": "Thư mục ảnh"
+      }
     }
   },
   "userRole": {

@@ -98,5 +98,7 @@ export async function importRoHang(req, res) {
     summary: summary,
     driveChecked: drive.checked,
     issues: parsed.issues,
+    // Dữ liệu đã đọc + chuẩn hoá, để admin xem từng căn trước khi bấm nhập
+    projects: parsed.projects,
   });
 }
