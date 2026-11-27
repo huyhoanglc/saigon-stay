@@ -3,14 +3,8 @@ import { useTranslation } from "react-i18next";
 import { useTheme } from "../hooks/useTheme";
 import { useAuth } from "../hooks/useAuth";
 import LanguageSwitcher from "./LanguageSwitcher";
-import Avatar from "./Avatar";
-import {
-  SunIcon,
-  MoonIcon,
-  LogOutIcon,
-  UserIcon,
-  ExternalLinkIcon,
-} from "./Icons";
+import UserMenu from "./UserMenu";
+import { SunIcon, MoonIcon, ExternalLinkIcon } from "./Icons";
 import { PUBLIC_SITE_URL } from "../utils/sites";
 import ConfirmDialog from "./ConfirmDialog";
 import { useConfirm } from "../hooks/useConfirm";
@@ -48,16 +42,9 @@ export default function AdminHeader() {
   const iconButtonClass =
     "flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-slate-600 transition hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800";
 
-  let userBlock = null;
+  let userMenu = null;
   if (user) {
-    userBlock = (
-      <div className="flex min-w-0 items-center gap-2">
-        <Avatar src={user.avatar} name={user.name} />
-        <span className="hidden max-w-[160px] truncate text-sm font-medium text-slate-700 dark:text-slate-200 md:block">
-          {user.name}
-        </span>
-      </div>
-    );
+    userMenu = <UserMenu onLogout={handleLogout} />;
   }
 
   return (
@@ -101,27 +88,7 @@ export default function AdminHeader() {
             {themeIcon}
           </button>
 
-          {userBlock}
-
-          {/* Trang cá nhân nằm ở web khách */}
-          <a
-            href={PUBLIC_SITE_URL + "/profile"}
-            className={iconButtonClass}
-            aria-label={t("admin.account")}
-            title={t("admin.account")}
-          >
-            <UserIcon className="h-5 w-5" />
-          </a>
-
-          <button
-            type="button"
-            onClick={handleLogout}
-            className={iconButtonClass}
-            aria-label={t("auth.logout")}
-            title={t("auth.logout")}
-          >
-            <LogOutIcon className="h-5 w-5" />
-          </button>
+          {userMenu}
         </div>
       </div>
       <ConfirmDialog {...dialogProps} />

@@ -35,6 +35,30 @@ export function AuthProvider({ children }) {
     };
   }, []);
 
+  // Web khách và web admin dùng chung 1 phiên đăng nhập. Khi quay lại tab này thì hỏi lại server
+  // để cập nhật tên, ảnh vừa sửa ở web bên kia (hoặc biết là đã đăng xuất ở bên kia).
+  useEffect(() => {
+    async function syncUser() {
+      if (document.visibilityState !== "visible") {
+        return;
+      }
+      try {
+        const me = await authApi.getMe();
+        setUser(me);
+      } catch (err) {
+        // Chỉ coi là đã đăng xuất khi server trả 401, mất mạng thì giữ nguyên
+        if (err.status === 401) {
+          setUser(null);
+        }
+      }
+    }
+
+    document.addEventListener("visibilitychange", syncUser);
+    return () => {
+      document.removeEventListener("visibilitychange", syncUser);
+    };
+  }, []);
+
   async function login(email, password) {
     const loggedInUser = await authApi.login(email, password);
     setUser(loggedInUser);

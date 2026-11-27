@@ -331,6 +331,14 @@ export function UsersIcon({ className }) {
   );
 }
 
+export function ChevronDownIcon({ className }) {
+  return (
+    <BaseIcon className={className}>
+      <path d="m6 9 6 6 6-6" />
+    </BaseIcon>
+  );
+}
+
 export function ExternalLinkIcon({ className }) {
   return (
     <BaseIcon className={className}>

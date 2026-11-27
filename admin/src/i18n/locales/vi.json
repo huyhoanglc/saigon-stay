@@ -421,5 +421,45 @@
     "ok": "Xác nhận",
     "cancel": "Huỷ",
     "processing": "Đang xử lý..."
+  },
+  "profile": {
+    "title": "Trang cá nhân",
+    "changeAvatar": "Đổi ảnh",
+    "removeAvatar": "Xoá ảnh",
+    "uploading": "Đang tải ảnh...",
+    "noEmail": "Chưa có email",
+    "infoTitle": "Thông tin cá nhân",
+    "phone": "Số điện thoại",
+    "emailHint": "Email dùng để đăng nhập, không đổi được.",
+    "save": "Lưu thay đổi",
+    "saving": "Đang lưu...",
+    "saved": "Đã lưu thông tin.",
+    "passwordTitle": "Đổi mật khẩu",
+    "passwordHint": "Đổi xong, các thiết bị khác sẽ bị đăng xuất.",
+    "setPasswordTitle": "Đặt mật khẩu",
+    "setPasswordHint": "Đặt mật khẩu để có thể đăng nhập bằng email, không cần Google/Zalo.",
+    "passwordNeedsEmail": "Tài khoản đăng nhập bằng Zalo chưa có email nên chưa đặt được mật khẩu.",
+    "currentPassword": "Mật khẩu hiện tại",
+    "newPassword": "Mật khẩu mới",
+    "savePassword": "Lưu mật khẩu",
+    "passwordSaved": "Đã cập nhật mật khẩu.",
+    "connectionsTitle": "Liên kết đăng nhập",
+    "connectionsHint": "Liên kết thêm để đăng nhập nhanh bằng Google hoặc Zalo.",
+    "linked": "Đã liên kết",
+    "notLinked": "Chưa liên kết",
+    "link": "Liên kết",
+    "unlink": "Gỡ liên kết",
+    "confirmUnlink": "Bạn sẽ không đăng nhập bằng {{provider}} được nữa cho tới khi liên kết lại.",
+    "linkedSuccess": "Đã liên kết {{provider}}.",
+    "provider": {
+      "google": "Google",
+      "zalo": "Zalo"
+    },
+    "unlinkTitle": "Gỡ liên kết {{provider}}?",
+    "removeAvatarTitle": "Xoá ảnh đại diện?",
+    "confirmRemoveAvatar": "Ảnh đại diện hiện tại sẽ bị xoá. Bạn có thể tải ảnh mới bất cứ lúc nào."
+  },
+  "userMenu": {
+    "label": "Menu tài khoản"
   }
 }

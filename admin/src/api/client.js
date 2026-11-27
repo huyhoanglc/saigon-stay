@@ -116,6 +116,64 @@ export function getOAuthStartUrl(provider, mode, redirect) {
   return baseURL + "/auth/" + provider + "/start?" + params.toString();
 }
 
+// ===== Trang cá nhân =====
+
+// Sửa tên, số điện thoại, ảnh đại diện. Ví dụ: updateProfile({ name: "An" })
+export async function updateProfile(changes) {
+  const response = await api.patch("/profile", changes);
+  return response.data.user;
+}
+
+// Đổi mật khẩu (hoặc đặt lần đầu nếu tài khoản tạo bằng Google/Zalo)
+export async function changePassword(currentPassword, newPassword) {
+  const response = await api.post("/profile/password", {
+    currentPassword: currentPassword,
+    newPassword: newPassword,
+  });
+  return response.data.user;
+}
+
+// Gỡ liên kết Google hoặc Zalo
+export async function unlinkProvider(provider) {
+  const response = await api.delete("/profile/providers/" + provider);
+  return response.data.user;
+}
+
+const MAX_AVATAR_SIZE = 5 * 1024 * 1024;
+
+// Upload ảnh đại diện lên Cloudinary, trả về link ảnh
+export async function uploadAvatar(file) {
+  if (!file.type.startsWith("image/")) {
+    throw { code: "FILE_NOT_IMAGE" };
+  }
+  if (file.size > MAX_AVATAR_SIZE) {
+    throw { code: "AVATAR_TOO_LARGE" };
+  }
+
+  // Bước 1: xin chữ ký từ server
+  const signResponse = await api.post("/profile/avatar-signature");
+  const sign = signResponse.data;
+
+  // Bước 2: gửi ảnh thẳng lên Cloudinary kèm chữ ký
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("api_key", sign.apiKey);
+  formData.append("timestamp", sign.timestamp);
+  formData.append("folder", sign.folder);
+  formData.append("signature", sign.signature);
+
+  const uploadUrl =
+    "https://api.cloudinary.com/v1_1/" + sign.cloudName + "/image/upload";
+
+  try {
+    // Dùng axios gốc (không phải api) để không gửi cookie của mình sang Cloudinary
+    const response = await axios.post(uploadUrl, formData);
+    return response.data.secure_url;
+  } catch {
+    throw { code: "UPLOAD_FAILED" };
+  }
+}
+
 // ===== Admin =====
 
 export async function getAdminStats() {

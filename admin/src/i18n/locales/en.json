@@ -429,5 +429,45 @@
     "ok": "Confirm",
     "cancel": "Cancel",
     "processing": "Processing..."
+  },
+  "profile": {
+    "title": "My profile",
+    "changeAvatar": "Change photo",
+    "removeAvatar": "Remove photo",
+    "uploading": "Uploading...",
+    "noEmail": "No email",
+    "infoTitle": "Personal information",
+    "phone": "Phone number",
+    "emailHint": "Your email is used to log in and can't be changed.",
+    "save": "Save changes",
+    "saving": "Saving...",
+    "saved": "Your information has been saved.",
+    "passwordTitle": "Change password",
+    "passwordHint": "After changing it, your other devices will be logged out.",
+    "setPasswordTitle": "Set a password",
+    "setPasswordHint": "Set a password to log in with your email, without Google/Zalo.",
+    "passwordNeedsEmail": "Accounts created with Zalo have no email, so a password can't be set yet.",
+    "currentPassword": "Current password",
+    "newPassword": "New password",
+    "savePassword": "Save password",
+    "passwordSaved": "Your password has been updated.",
+    "connectionsTitle": "Connected accounts",
+    "connectionsHint": "Link Google or Zalo for faster sign-in.",
+    "linked": "Linked",
+    "notLinked": "Not linked",
+    "link": "Link",
+    "unlink": "Unlink",
+    "confirmUnlink": "You won't be able to sign in with {{provider}} until you link it again.",
+    "linkedSuccess": "{{provider}} has been linked.",
+    "provider": {
+      "google": "Google",
+      "zalo": "Zalo"
+    },
+    "unlinkTitle": "Unlink {{provider}}?",
+    "removeAvatarTitle": "Remove profile picture?",
+    "confirmRemoveAvatar": "Your current profile picture will be removed. You can upload a new one any time."
+  },
+  "userMenu": {
+    "label": "Account menu"
   }
 }

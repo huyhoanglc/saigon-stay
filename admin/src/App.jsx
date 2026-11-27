@@ -10,6 +10,7 @@ import AdminRoomsPage from "./pages/AdminRoomsPage";
 import AdminRoomFormPage from "./pages/AdminRoomFormPage";
 import AdminInquiriesPage from "./pages/AdminInquiriesPage";
 import AdminUsersPage from "./pages/AdminUsersPage";
+import ProfilePage from "./pages/ProfilePage";
 
 function NotFound() {
   const { t } = useTranslation();
@@ -55,6 +56,7 @@ export default function App() {
           <Route path="rooms/:id" element={<AdminRoomFormPage />} />
           <Route path="inquiries" element={<AdminInquiriesPage />} />
           <Route path="users" element={<AdminUsersPage />} />
+          <Route path="profile" element={<ProfilePage />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
