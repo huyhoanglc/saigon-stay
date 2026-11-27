@@ -266,6 +266,42 @@ export async function cleanupUploads(urls) {
   return response.data;
 }
 
+// ===== Lấy ảnh từ Google Drive =====
+
+// Danh sách ảnh trong thư mục Drive: [{ id, name, size, thumbnail }]
+export async function listDriveImages(link) {
+  const response = await api.get("/admin/drive/images", { params: { link: link } });
+  return response.data.images;
+}
+
+// Server tự tìm thư mục ảnh của phòng (Quận / Phường / Mã dự án / Phòng).
+// Trả về { images, folder: { path, url } }
+export async function listRoomDriveImages(roomId) {
+  const response = await api.get("/admin/drive/rooms/" + roomId + "/images");
+  return response.data;
+}
+
+// Server tải 1 ảnh từ Drive lên Cloudinary, trả về link ảnh
+export async function importDriveImage(id) {
+  const response = await api.post("/admin/drive/images/" + encodeURIComponent(id) + "/import");
+  return response.data.url;
+}
+
+// ===== Nhập Excel rổ hàng =====
+
+// Gửi nguyên file .xlsx lên server.
+// commit = false: chỉ kiểm tra + xem trước. commit = true: ghi vào dữ liệu.
+export async function importRoHang(file, commit) {
+  let url = "/admin/import/rohang";
+  if (commit) {
+    url = url + "?commit=1";
+  }
+  const response = await api.post(url, file, {
+    headers: { "Content-Type": "application/octet-stream" },
+  });
+  return response.data;
+}
+
 // ===== Upload ảnh lên Cloudinary =====
 
 const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // Gói free của Cloudinary giới hạn 10MB/ảnh

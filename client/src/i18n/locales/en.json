@@ -141,7 +141,8 @@
     "studio": "Studio",
     "duplex": "Duplex",
     "1br": "1 bedroom",
-    "2br": "2 bedrooms"
+    "2br": "2 bedrooms",
+    "3br": "3 bedrooms"
   },
   "room": {
     "perMonth": "/month",

@@ -4,13 +4,17 @@
 export const AREAS = [
   "Quận 1",
   "Quận 3",
+  "Quận 5",
   "Quận 7",
+  "Quận 10",
+  "Quận 11",
   "Bình Thạnh",
   "Phú Nhuận",
+  "Tân Bình",
   "Thủ Đức",
 ];
 
-export const LAYOUTS = ["studio", "duplex", "1br", "2br"];
+export const LAYOUTS = ["studio", "duplex", "1br", "2br", "3br"];
 export const WINDOWS = ["balcony", "outside", "hallway", "none"];
 export const FURNITURES = ["full", "basic", "empty"];
 export const ROOM_STATUSES = ["available", "upcoming", "rented", "hidden"];

@@ -202,7 +202,7 @@ export default function AdminRoomsPage() {
                     {buildingName}
                   </td>
                   <td className={tdClass + " whitespace-nowrap text-slate-600 dark:text-slate-300"}>
-                    {t("layout." + room.layout)} · {room.size} m²
+                    {t("layout." + room.layout)} · {room.size ? room.size + " m²" : "— m²"}
                   </td>
                   <td className={tdClass + " whitespace-nowrap font-medium text-slate-800 dark:text-slate-100"}>
                     {formatPrice(room.price, i18n.language)}

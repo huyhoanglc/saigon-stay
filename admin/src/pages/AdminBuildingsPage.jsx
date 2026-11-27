@@ -10,7 +10,7 @@ import {
 } from "../components/AdminUI";
 import { ErrorMessage } from "../components/FormFields";
 import { thClass, tdClass, iconButtonClass } from "../components/adminStyles";
-import { PencilIcon, TrashIcon, SparklesIcon } from "../components/Icons";
+import { PencilIcon, TrashIcon, SparklesIcon, AlertIcon } from "../components/Icons";
 import ConfirmDialog from "../components/ConfirmDialog";
 import { useConfirm } from "../hooks/useConfirm";
 
@@ -61,8 +61,29 @@ export default function AdminBuildingsPage() {
           {buildings.map((building) => {
             // Admin thấy đủ địa chỉ, kể cả số nhà
             const address = building.address;
-            const fullAddress =
-              address.houseNumber + " " + address.street + ", " + address.ward;
+            let fullAddress = address.houseNumber + " " + address.street;
+            if (address.ward) {
+              fullAddress = fullAddress + ", " + address.ward;
+            }
+
+            // Tòa nhập từ Excel chưa có phường / tọa độ → nhắc admin bổ sung
+            let needsInfoBadge = null;
+            const hasLocation = building.location && building.location.coordinates && building.location.coordinates.length === 2;
+            if (!address.ward || !hasLocation) {
+              needsInfoBadge = (
+                <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800 dark:bg-amber-900/40 dark:text-amber-300">
+                  <AlertIcon className="h-3 w-3" />
+                  {t("admin.buildings.needsInfo")}
+                </span>
+              );
+            }
+
+            let projectCodeLine = null;
+            if (building.projectCode) {
+              projectCodeLine = (
+                <p className="text-xs text-slate-500 dark:text-slate-400">{building.projectCode}</p>
+              );
+            }
 
             let newBadge = null;
             if (building.isNewOpening) {
@@ -84,6 +105,8 @@ export default function AdminBuildingsPage() {
                     {building.name}
                   </Link>
                   {newBadge}
+                  {needsInfoBadge}
+                  {projectCodeLine}
                 </td>
                 <td className={tdClass}>
                   <p className="text-slate-700 dark:text-slate-200">{fullAddress}</p>
@@ -92,7 +115,7 @@ export default function AdminBuildingsPage() {
                   </p>
                 </td>
                 <td className={tdClass + " text-slate-600 dark:text-slate-300"}>
-                  {t("road." + building.roadType)}
+                  {building.roadType ? t("road." + building.roadType) : "-"}
                 </td>
                 <td className={tdClass}>
                   <Link

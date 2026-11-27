@@ -356,6 +356,7 @@ function RoomForm({ id, initialForm, buildings }) {
           images={form.images}
           onChange={handleImagesChange}
           onUploaded={trackUpload}
+          driveRoomId={id}
         />
       </FormSection>
 

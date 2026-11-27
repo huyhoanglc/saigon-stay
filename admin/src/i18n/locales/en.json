@@ -98,7 +98,19 @@
     "CURRENT_PASSWORD_WRONG": "Current password is incorrect",
     "EMAIL_REQUIRED_FOR_PASSWORD": "Your account has no email, so a password can't be set",
     "AVATAR_INVALID": "Invalid profile picture",
-    "AVATAR_TOO_LARGE": "Profile picture is too large (max 5MB)"
+    "AVATAR_TOO_LARGE": "Profile picture is too large (max 5MB)",
+    "ROOM_NOT_READY": "This room is missing info required to show it on the site: room size, plus the building ward and coordinates.",
+    "FILE_REQUIRED": "Please choose an Excel file.",
+    "FILE_NOT_XLSX": "The file is not a valid Excel (.xlsx) file.",
+    "IMPORT_EMPTY": "There are no valid projects to import.",
+    "DRIVE_NOT_CONFIGURED": "GOOGLE_API_KEY is not configured on the server.",
+    "DRIVE_LINK_INVALID": "Invalid Google Drive link.",
+    "DRIVE_NOT_ACCESSIBLE": "Cannot open this link. Check it and make sure it is shared as \"Anyone with the link\".",
+    "DRIVE_FILE_NOT_IMAGE": "This file is not an image.",
+    "DRIVE_FILE_TOO_LARGE": "Some images were too large (max 25MB) and were skipped.",
+    "DRIVE_FAILED": "Google Drive error, please try again.",
+    "DRIVE_FOLDER_NOT_FOUND": "Could not find this room's photo folder on Drive. Paste a folder link above.",
+    "DRIVE_ROOT_NOT_CONFIGURED": "GOOGLE_DRIVE_ROOT is not configured on the server. Paste a folder link above."
   },
   "pagination": {
     "prev": "Previous",
@@ -109,7 +121,8 @@
     "studio": "Studio",
     "duplex": "Duplex",
     "1br": "1 bedroom",
-    "2br": "2 bedrooms"
+    "2br": "2 bedrooms",
+    "3br": "3 bedrooms"
   },
   "room": {
     "perMonth": "/month",
@@ -265,7 +278,8 @@
       "buildings": "Buildings",
       "rooms": "Rooms",
       "inquiries": "Inquiries",
-      "users": "Users"
+      "users": "Users",
+      "import": "Import Excel"
     },
     "common": {
       "actions": "Actions",
@@ -325,7 +339,21 @@
       "ownerPhone": "Owner phone",
       "managerName": "Manager name",
       "managerPhone": "Manager phone",
-      "deleteTitle": "Delete building?"
+      "deleteTitle": "Delete building?",
+      "needsInfo": "Needs info",
+      "sectionSourcing": "Listing source info (admin only)",
+      "projectCode": "Project code",
+      "system": "System",
+      "shortTermRental": "Short-term rental",
+      "foreignersAllowed": "Foreigners allowed",
+      "zaloGroup": "Zalo group",
+      "ownerReview": "Owner review",
+      "policy": "Policy",
+      "importedAt": "Last imported",
+      "yes": "Yes",
+      "no": "No",
+      "unknown": "Unknown",
+      "sourcingHint": "These fields come from the Excel file. Edit the file and import it again to change them."
     },
     "rooms": {
       "add": "Add room",
@@ -378,12 +406,27 @@
       "title": "Images",
       "upload": "Upload images",
       "uploading": "Uploading {{done}}/{{total}}...",
-      "hint": "The first image is the cover. Max 10MB per image.",
+      "hint": "The first image is the card cover. Drag to reorder. Max 10MB per image.",
       "empty": "No images yet.",
       "cover": "Cover",
       "moveLeft": "Move earlier",
       "remove": "Remove image",
-      "alt": "Image {{number}}"
+      "alt": "Image {{number}}",
+      "fromDrive": "Import from Google Drive",
+      "setCover": "Set as cover",
+      "moveRight": "Move later",
+      "driveTitle": "Import from Google Drive",
+      "driveHint": "The room folder is found automatically (District / Ward / Project code / Room). Paste another folder link to use a different one. Click images to select them.",
+      "driveOpen": "Open",
+      "driveLoading": "Loading images...",
+      "driveEmpty": "This folder has no images.",
+      "driveSelected": "{{count}}/{{total}} selected",
+      "driveSelectAll": "Select all",
+      "driveClear": "Clear",
+      "driveAdd": "Add {{count}} images",
+      "driveImporting": "Importing {{done}}/{{total}}...",
+      "driveClose": "Close",
+      "driveOpenFolder": "Open folder in Drive"
     },
     "users": {
       "count_one": "{{count}} user",
@@ -413,7 +456,38 @@
     "account": "My account",
     "switchAccount": "Log out and switch account",
     "backToDashboard": "Back to overview",
-    "viewSite": "View website"
+    "viewSite": "View website",
+    "import": {
+      "title": "Import listings from Excel",
+      "subtitle": "Choose DATA RỔ HÀNG.xlsx (sheets DỰ ÁN and MÃ PHÒNG). The file is checked first; nothing is saved until you confirm.",
+      "chooseFile": "Choose .xlsx file",
+      "chooseAnother": "Choose another file",
+      "checking": "Reading and checking the file...",
+      "committing": "Importing...",
+      "commit": "Import",
+      "found": "Found {{projects}} projects, {{rooms}} rooms ({{groups}} rows in sheet MÃ PHÒNG).",
+      "buildings": "Buildings",
+      "rooms": "Rooms",
+      "created": "{{count}} new",
+      "updated": "{{count}} updated",
+      "hiddenNote": "New rooms are created as Hidden. Add the room size and photos, and the building ward and coordinates, then set them to Available to show them on the site. Re-importing later only updates prices and Excel fields, never what an admin edited.",
+      "issues": "Errors and warnings",
+      "errorCount": "{{count}} errors (rows skipped)",
+      "warningCount": "{{count}} warnings (still imported)",
+      "noIssues": "No errors or warnings.",
+      "sheet": "Sheet",
+      "row": "Row",
+      "column": "Column",
+      "message": "Message",
+      "levelError": "Error",
+      "levelWarning": "Warning",
+      "done": "Import finished.",
+      "viewBuildings": "View buildings",
+      "viewHiddenRooms": "View hidden rooms",
+      "wardsFromDrive": "Found wards for {{count}} buildings from Drive folders (only filled where empty).",
+      "wardsFilled": "Filled the ward for {{count}} buildings.",
+      "driveNotChecked": "Drive photo folders were not checked (GOOGLE_API_KEY / GOOGLE_DRIVE_ROOT not configured)."
+    }
   },
   "userRole": {
     "guest": "Guest",

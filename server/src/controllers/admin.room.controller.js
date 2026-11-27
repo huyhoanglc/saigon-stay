@@ -14,7 +14,7 @@ import {
 } from "../utils/validate.js";
 import { deleteUnusedImages, findRemovedImages } from "../utils/cloudinary.js";
 
-const LAYOUTS = ["studio", "duplex", "1br", "2br"];
+const LAYOUTS = ["studio", "duplex", "1br", "2br", "3br"];
 const WINDOWS = ["balcony", "outside", "hallway", "none"];
 const FURNITURES = ["full", "basic", "empty"];
 const STATUSES = ["available", "upcoming", "rented", "hidden"];
@@ -201,6 +201,49 @@ async function checkRoomConflicts(data, excludeRoomId) {
   return null;
 }
 
+// Phòng nhập từ Excel chưa có diện tích, tòa chưa có phường / tọa độ.
+// Chưa đủ thì chỉ được để "hidden", không cho hiện lên web khách (trang chi tiết sẽ thiếu dữ liệu).
+async function checkCanPublish(status, buildingId, size) {
+  if (status === "hidden") {
+    return null;
+  }
+
+  const building = await Building.findById(buildingId).select("address.ward location");
+  if (!building) {
+    return fail("BUILDING_NOT_FOUND", "Không tìm thấy tòa nhà");
+  }
+
+  const missing = [];
+  if (!size) {
+    missing.push("size");
+  }
+  if (!building.address || !building.address.ward) {
+    missing.push("ward");
+  }
+  const coordinates = building.location && building.location.coordinates;
+  if (!coordinates || coordinates.length !== 2) {
+    missing.push("location");
+  }
+  if (missing.length === 0) {
+    return null;
+  }
+
+  const result = fail(
+    "ROOM_NOT_READY",
+    "Cần bổ sung diện tích phòng, phường và tọa độ của tòa nhà trước khi hiện phòng lên web",
+  );
+  result.error.missing = missing;
+  return result;
+}
+
+function sendNotReady(res, notReady) {
+  let status = 409;
+  if (notReady.error.code === "BUILDING_NOT_FOUND") {
+    status = 404;
+  }
+  return res.status(status).json(notReady.error);
+}
+
 function sendInvalidId(res) {
   return res.status(400).json({ code: "INVALID_ID", message: "ID không hợp lệ" });
 }
@@ -269,7 +312,7 @@ export async function getRoom(req, res) {
     return sendInvalidId(res);
   }
 
-  const room = await Room.findById(id).select("+commission");
+  const room = await Room.findById(id).select("+commission +imageRef");
   if (!room) {
     return sendRoomNotFound(res);
   }
@@ -296,6 +339,11 @@ export async function createRoom(req, res) {
       status = 404;
     }
     return res.status(status).json(conflict.error);
+  }
+
+  const notReady = await checkCanPublish(result.data.status, result.data.building, result.data.size);
+  if (notReady) {
+    return sendNotReady(res, notReady);
   }
 
   const room = await Room.create(result.data);
@@ -331,6 +379,11 @@ export async function updateRoom(req, res) {
       status = 404;
     }
     return res.status(status).json(conflict.error);
+  }
+
+  const notReady = await checkCanPublish(result.data.status, result.data.building, result.data.size);
+  if (notReady) {
+    return sendNotReady(res, notReady);
   }
 
   // Nhớ danh sách ảnh cũ để biết ảnh nào bị bỏ đi
@@ -381,6 +434,17 @@ export async function patchRoom(req, res) {
     return res
       .status(400)
       .json({ code: "NOTHING_TO_UPDATE", message: "Không có gì để cập nhật" });
+  }
+
+  if (changes.status !== undefined) {
+    const current = await Room.findById(id).select("building size");
+    if (!current) {
+      return sendRoomNotFound(res);
+    }
+    const notReady = await checkCanPublish(changes.status, current.building, current.size);
+    if (notReady) {
+      return sendNotReady(res, notReady);
+    }
   }
 
   const room = await Room.findByIdAndUpdate(id, changes, {

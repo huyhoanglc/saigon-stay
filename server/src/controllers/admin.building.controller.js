@@ -13,7 +13,7 @@ import {
 import { deleteUnusedImages, findRemovedImages } from "../utils/cloudinary.js";
 
 // Admin được xem đủ, kể cả các trường ẩn với khách
-const HIDDEN_FIELDS = "+address.houseNumber +contact";
+const HIDDEN_FIELDS = "+address.houseNumber +contact +sourcing";
 
 const ROAD_TYPES = ["street_front", "car_alley", "motorbike_alley"];
 const PARKING_TYPES = ["basement", "garage", "none"];

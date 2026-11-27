@@ -15,11 +15,12 @@ const roomSchema = new mongoose.Schema(
 
     layout: {
       type: String,
-      enum: ["studio", "duplex", "1br", "2br"],
+      enum: ["studio", "duplex", "1br", "2br", "3br"],
       required: true,
     },
     separateKitchen: { type: Boolean, default: false },
-    size: { type: Number, required: true, min: 1 },
+    // Phòng nhập từ Excel chưa có diện tích, admin bổ sung trước khi cho hiện lên web
+    size: { type: Number, min: 1 },
     maxOccupants: { type: Number, default: 2 },
 
     window: {
@@ -50,6 +51,9 @@ const roomSchema = new mongoose.Schema(
     isHot: { type: Boolean, default: false },
 
     images: [String],
+
+    // Cột "LINK HÌNH ẢNH" trong file rổ hàng (hiện đang ghi tên thư mục ảnh), chỉ admin xem
+    imageRef: { type: String, select: false },
   },
   { timestamps: true },
 );

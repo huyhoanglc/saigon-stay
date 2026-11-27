@@ -1,4 +1,4 @@
-import { Router } from "express";
+import express, { Router } from "express";
 import { requireAuth, requireRole } from "../middleware/auth.js";
 import { getStats } from "../controllers/admin.stats.controller.js";
 import {
@@ -25,6 +25,8 @@ import {
   cleanupUploads,
 } from "../controllers/upload.controller.js";
 import { listUsers, updateUser } from "../controllers/admin.user.controller.js";
+import { importRoHang } from "../controllers/admin.import.controller.js";
+import { listImages, listRoomImages, importImage } from "../controllers/admin.drive.controller.js";
 
 const router = Router();
 
@@ -54,5 +56,17 @@ router.patch("/users/:id", updateUser);
 
 router.post("/uploads/signature", createUploadSignature);
 router.post("/uploads/cleanup", cleanupUploads);
+
+// Lấy ảnh từ thư mục Google Drive
+router.get("/drive/images", listImages);
+router.get("/drive/rooms/:id/images", listRoomImages);
+router.post("/drive/images/:id/import", importImage);
+
+// Nhập file Excel rổ hàng. Body là file .xlsx gửi thẳng (không phải JSON).
+router.post(
+  "/import/rohang",
+  express.raw({ type: "application/octet-stream", limit: "10mb" }),
+  importRoHang,
+);
 
 export default router;

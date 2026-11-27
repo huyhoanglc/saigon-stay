@@ -106,15 +106,25 @@ function buildingToForm(building) {
     images = building.images;
   }
 
+  // Tòa nhập từ Excel chưa có tọa độ / loại đường
+  let coordinates = [];
+  if (building.location && building.location.coordinates) {
+    coordinates = building.location.coordinates;
+  }
+  let roadType = "car_alley";
+  if (building.roadType) {
+    roadType = building.roadType;
+  }
+
   return {
     name: building.name,
     houseNumber: building.address.houseNumber,
     street: building.address.street,
-    ward: building.address.ward,
+    ward: building.address.ward || "",
     area: building.address.area,
-    lng: numberToText(building.location.coordinates[0]),
-    lat: numberToText(building.location.coordinates[1]),
-    roadType: building.roadType,
+    lng: numberToText(coordinates[0]),
+    lat: numberToText(coordinates[1]),
+    roadType: roadType,
     isDeadEnd: building.isDeadEnd,
     floors: numberToText(building.floors),
     hasElevator: building.hasElevator,
@@ -181,7 +191,94 @@ function formToPayload(form) {
   };
 }
 
-function BuildingForm({ id, initialForm }) {
+// Thông tin lấy từ file rổ hàng: chỉ xem, muốn sửa thì sửa file Excel rồi nhập lại
+function SourcingInfo({ building }) {
+  const { t, i18n } = useTranslation();
+
+  if (!building || (!building.projectCode && !building.sourcing)) {
+    return null;
+  }
+
+  let sourcing = {};
+  if (building.sourcing) {
+    sourcing = building.sourcing;
+  }
+
+  function yesNo(value) {
+    if (value === true) {
+      return t("admin.buildings.yes");
+    }
+    if (value === false) {
+      return t("admin.buildings.no");
+    }
+    return t("admin.buildings.unknown");
+  }
+
+  let zaloValue = "-";
+  if (sourcing.zaloGroupUrl) {
+    zaloValue = (
+      <a
+        href={sourcing.zaloGroupUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="break-all text-emerald-700 hover:underline dark:text-emerald-400"
+      >
+        {sourcing.zaloGroupUrl}
+      </a>
+    );
+  }
+
+  let importedAt = "-";
+  if (sourcing.importedAt) {
+    importedAt = new Date(sourcing.importedAt).toLocaleString(i18n.language);
+  }
+
+  const items = [
+    { label: t("admin.buildings.projectCode"), value: building.projectCode || "-" },
+    { label: t("admin.buildings.system"), value: sourcing.system || "-" },
+    { label: t("admin.buildings.shortTermRental"), value: yesNo(building.shortTermRental) },
+    { label: t("admin.buildings.foreignersAllowed"), value: yesNo(building.foreignersAllowed) },
+    { label: t("admin.buildings.ownerReview"), value: sourcing.ownerReview || "-" },
+    { label: t("admin.buildings.importedAt"), value: importedAt },
+    { label: t("admin.buildings.zaloGroup"), value: zaloValue },
+  ];
+
+  let policy = null;
+  if (sourcing.policy) {
+    policy = (
+      <div className="mt-4">
+        <p className="text-sm font-medium text-slate-700 dark:text-slate-300">
+          {t("admin.buildings.policy")}
+        </p>
+        <p className="mt-1 max-h-80 overflow-y-auto whitespace-pre-line rounded-lg bg-slate-50 p-3 text-sm text-slate-700 dark:bg-slate-800/60 dark:text-slate-200">
+          {sourcing.policy}
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <section className="rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900 sm:p-6">
+      <h2 className="text-base font-semibold text-slate-800 dark:text-slate-100">
+        {t("admin.buildings.sectionSourcing")}
+      </h2>
+      <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+        {t("admin.buildings.sourcingHint")}
+      </p>
+      <dl className="mt-4 grid grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-2 lg:grid-cols-3">
+        {items.map((item) => (
+          <div key={item.label} className="min-w-0">
+            <dt className="text-xs text-slate-500 dark:text-slate-400">{item.label}</dt>
+            <dd className="text-sm text-slate-800 dark:text-slate-100">{item.value}</dd>
+          </div>
+        ))}
+      </dl>
+      {policy}
+    </section>
+  );
+}
+
+function BuildingForm({ id, initialForm, sourceBuilding }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [form, setForm] = useState(initialForm);
@@ -459,6 +556,8 @@ function BuildingForm({ id, initialForm }) {
         <TextField label={t("admin.buildings.managerPhone")} name="managerPhone" type="tel" value={form.managerPhone} onChange={handleChange} />
       </FormSection>
 
+      <SourcingInfo building={sourceBuilding} />
+
       <FormSection title={t("detail.description")}>
         <TextAreaField
           label={t("detail.description")}
@@ -507,7 +606,7 @@ export default function AdminBuildingFormPage() {
     content = <StateMessage isError>{t("errors." + error.code)}</StateMessage>;
   } else {
     // key: đổi sang tòa khác thì form được tạo lại với dữ liệu mới
-    content = <BuildingForm key={id} id={id} initialForm={buildingToForm(item)} />;
+    content = <BuildingForm key={id} id={id} initialForm={buildingToForm(item)} sourceBuilding={item} />;
   }
 
   return (

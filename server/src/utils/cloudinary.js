@@ -137,3 +137,44 @@ export function findRemovedImages(oldImages, newImages) {
   }
   return removed;
 }
+
+// Thu nhỏ ảnh ngay lúc upload (ảnh điện thoại thường 4000px, vài MB) và đổi sang JPG
+// (ảnh HEIC của iPhone trình duyệt không hiện được).
+const SERVER_UPLOAD_TRANSFORMATION = "c_limit,w_1920,h_1920,q_auto:good";
+
+// Upload ảnh từ server lên Cloudinary (dùng khi lấy ảnh từ Google Drive).
+// Trả về link ảnh https.
+export async function uploadImageBuffer(buffer, mimeType) {
+  const config = getCloudinaryConfig();
+  if (!config) {
+    const error = new Error("Chưa cấu hình Cloudinary");
+    error.code = "UPLOAD_NOT_CONFIGURED";
+    throw error;
+  }
+
+  const params = {
+    folder: UPLOAD_FOLDER,
+    format: "jpg",
+    timestamp: Math.floor(Date.now() / 1000),
+    transformation: SERVER_UPLOAD_TRANSFORMATION,
+  };
+  const signature = signParams(params, config.apiSecret);
+
+  const body = new FormData();
+  body.append("file", new Blob([buffer], { type: mimeType }));
+  for (const key of Object.keys(params)) {
+    body.append(key, String(params[key]));
+  }
+  body.append("api_key", config.apiKey);
+  body.append("signature", signature);
+
+  const url = "https://api.cloudinary.com/v1_1/" + config.cloudName + "/image/upload";
+  const response = await fetch(url, { method: "POST", body: body });
+  const data = await response.json();
+  if (!response.ok || !data.secure_url) {
+    const error = new Error("Cloudinary upload lỗi: " + JSON.stringify(data.error || data));
+    error.code = "UPLOAD_FAILED";
+    throw error;
+  }
+  return data.secure_url;
+}

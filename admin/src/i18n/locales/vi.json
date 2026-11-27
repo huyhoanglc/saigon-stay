@@ -98,7 +98,19 @@
     "CURRENT_PASSWORD_WRONG": "Mật khẩu hiện tại không đúng",
     "EMAIL_REQUIRED_FOR_PASSWORD": "Tài khoản chưa có email nên chưa đặt được mật khẩu",
     "AVATAR_INVALID": "Ảnh đại diện không hợp lệ",
-    "AVATAR_TOO_LARGE": "Ảnh đại diện quá lớn (tối đa 5MB)"
+    "AVATAR_TOO_LARGE": "Ảnh đại diện quá lớn (tối đa 5MB)",
+    "ROOM_NOT_READY": "Phòng chưa đủ thông tin để hiện lên web: cần diện tích phòng, phường và tọa độ của tòa nhà.",
+    "FILE_REQUIRED": "Chưa chọn file Excel.",
+    "FILE_NOT_XLSX": "File không phải Excel (.xlsx) hoặc bị hỏng.",
+    "IMPORT_EMPTY": "Không có dự án hợp lệ nào để nhập.",
+    "DRIVE_NOT_CONFIGURED": "Server chưa cấu hình GOOGLE_API_KEY để đọc Google Drive.",
+    "DRIVE_LINK_INVALID": "Link Google Drive không hợp lệ.",
+    "DRIVE_NOT_ACCESSIBLE": "Không mở được link: kiểm tra link đúng chưa và đã chia sẻ \"Bất kỳ ai có đường liên kết\" chưa.",
+    "DRIVE_FILE_NOT_IMAGE": "File này không phải ảnh.",
+    "DRIVE_FILE_TOO_LARGE": "Có ảnh quá lớn (tối đa 25MB) nên bị bỏ qua.",
+    "DRIVE_FAILED": "Google Drive đang lỗi, thử lại sau.",
+    "DRIVE_FOLDER_NOT_FOUND": "Không tự tìm thấy thư mục ảnh của phòng này trên Drive. Dán link thư mục vào ô bên trên.",
+    "DRIVE_ROOT_NOT_CONFIGURED": "Server chưa cấu hình GOOGLE_DRIVE_ROOT (link thư mục HÌNH ẢNH DỰ ÁN). Dán link thư mục vào ô bên trên."
   },
   "pagination": {
     "prev": "Trước",
@@ -109,7 +121,8 @@
     "studio": "Studio",
     "duplex": "Duplex",
     "1br": "1 phòng ngủ",
-    "2br": "2 phòng ngủ"
+    "2br": "2 phòng ngủ",
+    "3br": "3 phòng ngủ"
   },
   "room": {
     "perMonth": "/tháng",
@@ -260,7 +273,8 @@
       "buildings": "Tòa nhà",
       "rooms": "Phòng",
       "inquiries": "Yêu cầu tư vấn",
-      "users": "Người dùng"
+      "users": "Người dùng",
+      "import": "Nhập Excel"
     },
     "common": {
       "actions": "Thao tác",
@@ -319,7 +333,21 @@
       "ownerPhone": "SĐT chủ nhà",
       "managerName": "Tên quản lý",
       "managerPhone": "SĐT quản lý",
-      "deleteTitle": "Xoá tòa nhà?"
+      "deleteTitle": "Xoá tòa nhà?",
+      "needsInfo": "Cần bổ sung",
+      "sectionSourcing": "Thông tin từ rổ hàng (chỉ admin thấy)",
+      "projectCode": "Mã dự án",
+      "system": "Hệ thống",
+      "shortTermRental": "Nhận ngắn hạn",
+      "foreignersAllowed": "Nhận người nước ngoài",
+      "zaloGroup": "Nhóm Zalo",
+      "ownerReview": "Review chủ nhà",
+      "policy": "Chính sách",
+      "importedAt": "Nhập lần cuối",
+      "yes": "Có",
+      "no": "Không",
+      "unknown": "Chưa rõ",
+      "sourcingHint": "Các thông tin này lấy từ file Excel, muốn sửa thì sửa trong file rồi nhập lại."
     },
     "rooms": {
       "add": "Thêm phòng",
@@ -371,12 +399,27 @@
       "title": "Hình ảnh",
       "upload": "Tải ảnh lên",
       "uploading": "Đang tải {{done}}/{{total}}...",
-      "hint": "Ảnh đầu tiên là ảnh bìa. Tối đa 10MB mỗi ảnh.",
+      "hint": "Ảnh đầu tiên là ảnh bìa trên card. Kéo thả để sắp xếp. Tối đa 10MB mỗi ảnh.",
       "empty": "Chưa có ảnh nào.",
       "cover": "Ảnh bìa",
       "moveLeft": "Chuyển lên trước",
       "remove": "Xoá ảnh",
-      "alt": "Ảnh số {{number}}"
+      "alt": "Ảnh số {{number}}",
+      "fromDrive": "Lấy ảnh từ Google Drive",
+      "setCover": "Đặt làm ảnh bìa",
+      "moveRight": "Chuyển ra sau",
+      "driveTitle": "Lấy ảnh từ Google Drive",
+      "driveHint": "Ảnh của phòng được tự tìm theo thư mục Quận / Phường / Mã dự án / Phòng. Muốn lấy chỗ khác thì dán link thư mục. Bấm vào ảnh để chọn.",
+      "driveOpen": "Mở",
+      "driveLoading": "Đang tải danh sách ảnh...",
+      "driveEmpty": "Thư mục không có ảnh nào.",
+      "driveSelected": "Đã chọn {{count}}/{{total}} ảnh",
+      "driveSelectAll": "Chọn tất cả",
+      "driveClear": "Bỏ chọn",
+      "driveAdd": "Thêm {{count}} ảnh",
+      "driveImporting": "Đang lấy ảnh {{done}}/{{total}}...",
+      "driveClose": "Đóng",
+      "driveOpenFolder": "Mở thư mục trên Drive"
     },
     "users": {
       "count": "{{count}} người dùng",
@@ -405,7 +448,38 @@
     "account": "Tài khoản của tôi",
     "switchAccount": "Đăng xuất, dùng tài khoản khác",
     "backToDashboard": "Về trang tổng quan",
-    "viewSite": "Xem trang khách"
+    "viewSite": "Xem trang khách",
+    "import": {
+      "title": "Nhập rổ hàng từ Excel",
+      "subtitle": "Chọn file DATA RỔ HÀNG.xlsx (2 sheet DỰ ÁN và MÃ PHÒNG). Hệ thống kiểm tra trước, bấm xác nhận mới ghi vào dữ liệu.",
+      "chooseFile": "Chọn file .xlsx",
+      "chooseAnother": "Chọn file khác",
+      "checking": "Đang đọc và kiểm tra file...",
+      "committing": "Đang nhập...",
+      "commit": "Nhập vào hệ thống",
+      "found": "Đọc được {{projects}} dự án, {{rooms}} phòng ({{groups}} dòng trong sheet MÃ PHÒNG).",
+      "buildings": "Tòa nhà",
+      "rooms": "Phòng",
+      "created": "{{count}} mới",
+      "updated": "{{count}} cập nhật",
+      "hiddenNote": "Phòng mới được tạo ở trạng thái Đang ẩn. Bổ sung diện tích, ảnh cho phòng và phường, tọa độ cho tòa nhà rồi mới chuyển sang Còn trống để hiện lên web. Nhập lại file sau này chỉ cập nhật giá và thông tin từ Excel, không đụng tới phần admin đã sửa.",
+      "issues": "Lỗi và cảnh báo",
+      "errorCount": "{{count}} lỗi (dòng bị bỏ qua)",
+      "warningCount": "{{count}} cảnh báo (vẫn nhập)",
+      "noIssues": "Không có lỗi hay cảnh báo nào.",
+      "sheet": "Sheet",
+      "row": "Dòng",
+      "column": "Cột",
+      "message": "Nội dung",
+      "levelError": "Lỗi",
+      "levelWarning": "Cảnh báo",
+      "done": "Đã nhập xong.",
+      "viewBuildings": "Xem tòa nhà",
+      "viewHiddenRooms": "Xem phòng đang ẩn",
+      "wardsFromDrive": "Lấy được phường cho {{count}} tòa từ thư mục Drive (chỉ điền cho tòa đang trống phường).",
+      "wardsFilled": "Đã điền phường cho {{count}} tòa.",
+      "driveNotChecked": "Chưa đối chiếu thư mục ảnh trên Drive (server chưa cấu hình GOOGLE_API_KEY / GOOGLE_DRIVE_ROOT)."
+    }
   },
   "userRole": {
     "guest": "Khách",

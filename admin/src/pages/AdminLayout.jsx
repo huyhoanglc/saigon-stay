@@ -9,6 +9,7 @@ import {
   DoorIcon,
   MessageIcon,
   UsersIcon,
+  UploadIcon,
 } from "../components/Icons";
 
 export default function AdminLayout() {
@@ -20,6 +21,7 @@ export default function AdminLayout() {
     { to: "/rooms", label: t("admin.nav.rooms"), icon: DoorIcon, end: false },
     { to: "/inquiries", label: t("admin.nav.inquiries"), icon: MessageIcon, end: false },
     { to: "/users", label: t("admin.nav.users"), icon: UsersIcon, end: false },
+    { to: "/import", label: t("admin.nav.import"), icon: UploadIcon, end: false },
   ];
 
   function getNavClass({ isActive }) {

@@ -49,6 +49,12 @@ app.use((err, req, res, next) => {
       .json({ code: "INVALID_JSON", message: "Dữ liệu gửi lên sai định dạng" });
   }
 
+  if (err.type === "entity.too.large") {
+    return res
+      .status(413)
+      .json({ code: "FILE_TOO_LARGE", message: "Dữ liệu gửi lên quá lớn" });
+  }
+
   if (err.name === "ValidationError") {
     return res
       .status(400)
