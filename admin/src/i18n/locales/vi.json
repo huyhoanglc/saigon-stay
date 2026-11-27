@@ -347,7 +347,9 @@
       "yes": "Có",
       "no": "Không",
       "unknown": "Chưa rõ",
-      "sourcingHint": "Các thông tin này lấy từ file Excel, muốn sửa thì sửa trong file rồi nhập lại."
+      "sourcingHint": "Các thông tin này lấy từ file Excel, muốn sửa thì sửa trong file rồi nhập lại.",
+      "confirmDeleteWithRooms": "Tòa nhà \"{{name}}\" còn {{count}} phòng. Xoá tòa sẽ xoá luôn cả {{count}} phòng này cùng ảnh của chúng. Không thể hoàn tác.",
+      "deleteWithRooms": "Xoá tòa và {{count}} phòng"
     },
     "rooms": {
       "add": "Thêm phòng",

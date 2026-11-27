@@ -353,7 +353,11 @@
       "yes": "Yes",
       "no": "No",
       "unknown": "Unknown",
-      "sourcingHint": "These fields come from the Excel file. Edit the file and import it again to change them."
+      "sourcingHint": "These fields come from the Excel file. Edit the file and import it again to change them.",
+      "confirmDeleteWithRooms_one": "Building \"{{name}}\" still has {{count}} room. Deleting it also deletes that room and its photos. This cannot be undone.",
+      "confirmDeleteWithRooms_other": "Building \"{{name}}\" still has {{count}} rooms. Deleting it also deletes all {{count}} rooms and their photos. This cannot be undone.",
+      "deleteWithRooms_one": "Delete building and {{count}} room",
+      "deleteWithRooms_other": "Delete building and {{count}} rooms"
     },
     "rooms": {
       "add": "Add room",

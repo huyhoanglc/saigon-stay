@@ -22,14 +22,23 @@ export default function AdminBuildingsPage() {
   const { askConfirm, dialogProps } = useConfirm();
 
   function handleDelete(building) {
+    // Tòa còn phòng: báo rõ sẽ xoá luôn bao nhiêu phòng, admin đồng ý mới xoá
+    const roomCount = building.roomCount || 0;
+    let message = t("admin.buildings.confirmDelete", { name: building.name });
+    let confirmLabel = t("admin.common.delete");
+    if (roomCount > 0) {
+      message = t("admin.buildings.confirmDeleteWithRooms", { name: building.name, count: roomCount });
+      confirmLabel = t("admin.buildings.deleteWithRooms", { count: roomCount });
+    }
+
     askConfirm({
       title: t("admin.buildings.deleteTitle"),
-      message: t("admin.buildings.confirmDelete", { name: building.name }),
-      confirmLabel: t("admin.common.delete"),
+      message: message,
+      confirmLabel: confirmLabel,
       action: async () => {
         setActionError("");
         try {
-          await deleteBuilding(building._id);
+          await deleteBuilding(building._id, roomCount > 0);
           setReloadKey((key) => key + 1);
         } catch (err) {
           setActionError(t("errors." + err.code));

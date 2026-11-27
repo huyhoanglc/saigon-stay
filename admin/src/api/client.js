@@ -201,8 +201,13 @@ export async function updateBuilding(id, data) {
   return response.data;
 }
 
-export async function deleteBuilding(id) {
-  const response = await api.delete("/admin/buildings/" + id);
+// withRooms = true: xoá luôn mọi phòng của tòa (chỉ gọi sau khi admin đã xác nhận)
+export async function deleteBuilding(id, withRooms) {
+  let url = "/admin/buildings/" + id;
+  if (withRooms) {
+    url = url + "?withRooms=1";
+  }
+  const response = await api.delete(url);
   return response.data;
 }
 

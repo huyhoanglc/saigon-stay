@@ -296,20 +296,38 @@ export async function updateBuilding(req, res) {
   res.json({ id: building._id });
 }
 
-// DELETE /api/admin/buildings/:id
+// DELETE /api/admin/buildings/:id               → chỉ xoá được tòa không còn phòng
+// DELETE /api/admin/buildings/:id?withRooms=1   → xoá luôn mọi phòng của tòa (admin đã xác nhận)
 export async function deleteBuilding(req, res) {
   const id = req.params.id;
   if (!mongoose.isValidObjectId(id)) {
     return sendInvalidId(res);
   }
 
-  // Không cho xoá tòa còn phòng, tránh phòng bị "mồ côi"
+  const building = await Building.findById(id).select("_id");
+  if (!building) {
+    return sendBuildingNotFound(res);
+  }
+
+  // Không có cờ withRooms thì không cho xoá tòa còn phòng, tránh phòng bị "mồ côi"
+  const withRooms = req.query.withRooms === "1";
   const roomCount = await Room.countDocuments({ building: id });
-  if (roomCount > 0) {
+  if (roomCount > 0 && !withRooms) {
     return res.status(409).json({
       code: "BUILDING_HAS_ROOMS",
       message: "Tòa nhà vẫn còn phòng, hãy xoá phòng trước",
+      roomCount: roomCount,
     });
+  }
+
+  // Nhớ ảnh của các phòng trước khi xoá để dọn trên Cloudinary
+  let roomImages = [];
+  if (roomCount > 0) {
+    const rooms = await Room.find({ building: id }).select("images");
+    for (const room of rooms) {
+      roomImages = roomImages.concat(room.images);
+    }
+    await Room.deleteMany({ building: id });
   }
 
   const deleted = await Building.findByIdAndDelete(id);
@@ -317,7 +335,8 @@ export async function deleteBuilding(req, res) {
     return sendBuildingNotFound(res);
   }
 
-  await deleteUnusedImages(deleted.images);
+  // Xoá dữ liệu xong mới xoá ảnh (ảnh nào còn chỗ khác dùng thì được giữ lại)
+  await deleteUnusedImages(deleted.images.concat(roomImages));
 
-  res.json({ code: "BUILDING_DELETED" });
+  res.json({ code: "BUILDING_DELETED", deletedRooms: roomCount });
 }
