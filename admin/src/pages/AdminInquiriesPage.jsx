@@ -138,11 +138,18 @@ export default function AdminInquiriesPage() {
                 );
               }
 
+              // Mã nhân viên khách điền. Khớp nhân viên nào thì hiện tên, không khớp thì ghi rõ để admin biết.
               let staffLine = null;
               if (inquiry.staffCode) {
+                let staffText = inquiry.staffCode + " · " + t("admin.inquiries.staffUnknown");
+                let staffClass = "mt-1 block text-xs text-amber-700 dark:text-amber-400";
+                if (inquiry.staff) {
+                  staffText = inquiry.staff.code + " · " + inquiry.staff.name;
+                  staffClass = "mt-1 block text-xs text-emerald-700 dark:text-emerald-400";
+                }
                 staffLine = (
-                  <span className="mt-1 block text-xs text-slate-500 dark:text-slate-400">
-                    {t("admin.inquiries.staffCode")}: {inquiry.staffCode}
+                  <span className={staffClass}>
+                    {t("admin.inquiries.staffCode")}: {staffText}
                   </span>
                 );
               }

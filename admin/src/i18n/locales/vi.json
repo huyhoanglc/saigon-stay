@@ -113,7 +113,9 @@
     "DRIVE_KEY_INVALID": "GOOGLE_API_KEY trên server không đúng. Kiểm tra lại key trong Google Cloud → Credentials.",
     "DRIVE_API_DISABLED": "Project Google Cloud chưa bật Google Drive API. Vào APIs & Services → Library → Google Drive API → Enable.",
     "DRIVE_KEY_RESTRICTED": "API key đang bị giới hạn (theo website / IP / API). Vào Credentials → sửa key: Application restrictions chọn None, API restrictions chỉ chọn Google Drive API.",
-    "DRIVE_RATE_LIMITED": "Gọi Google Drive quá nhiều trong thời gian ngắn, đợi một lát rồi thử lại."
+    "DRIVE_RATE_LIMITED": "Gọi Google Drive quá nhiều trong thời gian ngắn, đợi một lát rồi thử lại.",
+    "STAFF_CODE_INVALID": "Mã nhân viên chỉ gồm chữ, số, gạch ngang, gạch dưới (2–20 ký tự).",
+    "STAFF_CODE_EXISTS": "Mã nhân viên này đã có người dùng."
   },
   "pagination": {
     "prev": "Trước",
@@ -407,7 +409,8 @@
       "status": "Trạng thái",
       "staffCode": "Mã NV",
       "noName": "(Không để tên)",
-      "deletedRoom": "(Phòng đã xoá)"
+      "deletedRoom": "(Phòng đã xoá)",
+      "staffUnknown": "không khớp nhân viên nào"
     },
     "images": {
       "title": "Hình ảnh",
@@ -455,7 +458,28 @@
       "roleTitle": "Đổi vai trò?",
       "confirmRole": "Đổi vai trò của {{name}} thành \"{{role}}\"? Người này sẽ bị đăng xuất và nhận quyền mới khi đăng nhập lại.",
       "changeRole": "Đổi vai trò",
-      "lockTitle": "Khoá tài khoản?"
+      "lockTitle": "Khoá tài khoản?",
+      "addStaff": "Thêm nhân viên",
+      "createStaff": "Tạo tài khoản",
+      "staffCode": "Mã nhân viên",
+      "staffCodeAuto": "Để trống để tự cấp (NV001, NV002...)",
+      "staffCodeHint": "Khách điền mã này ở form yêu cầu tư vấn. Chỉ gồm chữ, số, gạch ngang.",
+      "noStaffCode": "Chưa có",
+      "editStaffCode": "Sửa mã nhân viên của {{name}}",
+      "phone": "Số điện thoại",
+      "emailHint": "Nhân viên dùng email này để đăng nhập.",
+      "passwordAutoHint": "Mật khẩu được tạo tự động và chỉ hiện 1 lần sau khi tạo. Nhân viên đăng nhập rồi tự đổi ở trang cá nhân.",
+      "staffCreatedTitle": "Đã tạo tài khoản nhân viên",
+      "resetDoneTitle": "Đã đặt lại mật khẩu",
+      "passwordOnce": "Mật khẩu chỉ hiện 1 lần. Hãy sao chép và gửi cho nhân viên ngay, đóng lại là không xem được nữa.",
+      "copy": "Sao chép",
+      "copied": "Đã sao chép",
+      "copyAll": "Sao chép tất cả",
+      "done": "Xong",
+      "loginInfoText": "Tài khoản SaiGon Stay của {{name}}\nEmail: {{email}}\nMật khẩu: {{password}}\nĐăng nhập xong vui lòng đổi mật khẩu ở trang cá nhân.",
+      "resetPassword": "Đặt lại mật khẩu",
+      "resetTitle": "Đặt lại mật khẩu?",
+      "confirmReset": "Tạo mật khẩu mới cho {{name}}? Mật khẩu cũ sẽ không dùng được nữa và người này bị đăng xuất khỏi mọi thiết bị."
     },
     "loginTitle": "Đăng nhập quản trị",
     "loginSubtitle": "Chỉ dành cho tài khoản có quyền admin.",

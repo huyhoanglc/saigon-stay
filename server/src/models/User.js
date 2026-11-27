@@ -25,6 +25,10 @@ const userSchema = new mongoose.Schema(
     googleId: { type: String },
     zaloId: { type: String },
 
+    // Mã nhân viên (vd "NV001"), chỉ sale / admin mới có.
+    // Khách điền mã này ở form yêu cầu tư vấn để biết ai giới thiệu.
+    staffCode: { type: String, trim: true, uppercase: true },
+
     role: {
       type: String,
       enum: ["guest", "sale", "admin"],
@@ -40,5 +44,6 @@ const userSchema = new mongoose.Schema(
 userSchema.index({ email: 1 }, uniqueWhenSet("email"));
 userSchema.index({ googleId: 1 }, uniqueWhenSet("googleId"));
 userSchema.index({ zaloId: 1 }, uniqueWhenSet("zaloId"));
+userSchema.index({ staffCode: 1 }, uniqueWhenSet("staffCode"));
 
 export default mongoose.model("User", userSchema);

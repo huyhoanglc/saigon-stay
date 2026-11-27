@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router";
 import { useTranslation } from "react-i18next";
 import { useAdminUsers } from "../hooks/useAdminUsers";
 import { useAuth } from "../hooks/useAuth";
-import { updateUser } from "../api/client";
+import { updateUser, resetUserPassword } from "../api/client";
 import {
   PageHeader,
   StateMessage,
@@ -21,7 +21,10 @@ import {
 import Pagination from "../components/Pagination";
 import ConfirmDialog from "../components/ConfirmDialog";
 import { useConfirm } from "../hooks/useConfirm";
-import { SearchIcon } from "../components/Icons";
+import { SearchIcon, PencilIcon, KeyIcon } from "../components/Icons";
+import StaffFormDialog from "../components/StaffFormDialog";
+import StaffCodeDialog from "../components/StaffCodeDialog";
+import PasswordResultDialog from "../components/PasswordResultDialog";
 import { USER_ROLES } from "../utils/constants";
 import { formatDate } from "../utils/format";
 
@@ -32,6 +35,11 @@ export default function AdminUsersPage() {
   const [reloadKey, setReloadKey] = useState(0);
   const { askConfirm, dialogProps } = useConfirm();
   const [actionError, setActionError] = useState("");
+  // Popup: thêm nhân viên, sửa mã nhân viên, hiện mật khẩu vừa tạo
+  const [showStaffForm, setShowStaffForm] = useState(false);
+  const [editingCodeUser, setEditingCodeUser] = useState(null);
+  const [passwordResult, setPasswordResult] = useState(null);
+  const [passwordTitle, setPasswordTitle] = useState("");
 
   const role = searchParams.get("role") || "";
   const q = searchParams.get("q") || "";
@@ -118,6 +126,67 @@ export default function AdminUsersPage() {
     });
   }
 
+  function handleOpenStaffForm() {
+    setShowStaffForm(true);
+  }
+
+  function handleCloseStaffForm() {
+    setShowStaffForm(false);
+  }
+
+  // Tạo xong: đóng form, hiện mật khẩu để admin gửi cho nhân viên, tải lại danh sách
+  function handleStaffCreated(result) {
+    setShowStaffForm(false);
+    setPasswordTitle(t("admin.users.staffCreatedTitle"));
+    setPasswordResult({
+      name: result.user.name,
+      email: result.user.email,
+      password: result.password,
+      staffCode: result.user.staffCode,
+    });
+    setReloadKey((key) => key + 1);
+  }
+
+  function handleClosePassword() {
+    setPasswordResult(null);
+  }
+
+  function handleEditCode(user) {
+    setEditingCodeUser(user);
+  }
+
+  function handleCloseEditCode() {
+    setEditingCodeUser(null);
+  }
+
+  function handleCodeSaved() {
+    setEditingCodeUser(null);
+    setReloadKey((key) => key + 1);
+  }
+
+  function handleResetPassword(user) {
+    askConfirm({
+      title: t("admin.users.resetTitle"),
+      message: t("admin.users.confirmReset", { name: user.name }),
+      confirmLabel: t("admin.users.resetPassword"),
+      action: async () => {
+        setActionError("");
+        try {
+          const result = await resetUserPassword(user.id);
+          setPasswordTitle(t("admin.users.resetDoneTitle"));
+          setPasswordResult({
+            name: result.user.name,
+            email: result.user.email,
+            password: result.password,
+            staffCode: result.user.staffCode,
+          });
+        } catch (err) {
+          setActionError(t("errors." + err.code));
+        }
+      },
+    });
+  }
+
   const roleOptions = [];
   for (const item of USER_ROLES) {
     roleOptions.push({ value: item, label: t("userRole." + item) });
@@ -137,6 +206,7 @@ export default function AdminUsersPage() {
           <thead>
             <tr>
               <th className={thClass}>{t("admin.users.user")}</th>
+              <th className={thClass}>{t("admin.users.staffCode")}</th>
               <th className={thClass}>{t("admin.users.role")}</th>
               <th className={thClass}>{t("admin.users.createdAt")}</th>
               <th className={thClass}>{t("admin.users.status")}</th>
@@ -182,6 +252,55 @@ export default function AdminUsersPage() {
                   " border-emerald-300 text-emerald-700 hover:bg-emerald-50 dark:border-emerald-800 dark:text-emerald-400 dark:hover:bg-emerald-950/40";
               }
 
+              // Mã nhân viên: chỉ sale / admin mới có. Bấm bút chì để sửa.
+              let staffCodeCell = (
+                <span className="text-slate-400 dark:text-slate-500">—</span>
+              );
+              if (user.role === "sale" || user.role === "admin") {
+                let codeText = (
+                  <span className="text-sm text-slate-400 dark:text-slate-500">
+                    {t("admin.users.noStaffCode")}
+                  </span>
+                );
+                if (user.staffCode) {
+                  codeText = (
+                    <span className="rounded bg-slate-100 px-2 py-0.5 font-mono text-xs font-semibold text-slate-700 dark:bg-slate-800 dark:text-slate-200">
+                      {user.staffCode}
+                    </span>
+                  );
+                }
+                staffCodeCell = (
+                  <div className="flex items-center gap-1">
+                    {codeText}
+                    <button
+                      type="button"
+                      onClick={() => handleEditCode(user)}
+                      className={iconButtonClass}
+                      aria-label={t("admin.users.editStaffCode", { name: user.name })}
+                      title={t("admin.users.editStaffCode", { name: user.name })}
+                    >
+                      <PencilIcon className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                );
+              }
+
+              // Đặt lại mật khẩu: không áp dụng cho chính mình, hay tài khoản không có email (Zalo)
+              let resetButton = null;
+              if (!isSelf && user.email) {
+                resetButton = (
+                  <button
+                    type="button"
+                    onClick={() => handleResetPassword(user)}
+                    className={iconButtonClass}
+                    aria-label={t("admin.users.resetPassword") + " " + user.name}
+                    title={t("admin.users.resetPassword")}
+                  >
+                    <KeyIcon className="h-4 w-4" />
+                  </button>
+                );
+              }
+
               return (
                 <tr key={user.id} className={rowClass}>
                   <td className={tdClass}>
@@ -191,6 +310,7 @@ export default function AdminUsersPage() {
                     </p>
                     <p className="text-xs text-slate-500 dark:text-slate-400">{user.email}</p>
                   </td>
+                  <td className={tdClass}>{staffCodeCell}</td>
                   <td className={tdClass}>
                     <select
                       value={user.role}
@@ -211,14 +331,17 @@ export default function AdminUsersPage() {
                   </td>
                   <td className={tdClass}>{statusBadge}</td>
                   <td className={tdClass + " text-right"}>
-                    <button
-                      type="button"
-                      onClick={() => handleToggleActive(user)}
-                      disabled={isSelf}
-                      className={toggleClass}
-                    >
-                      {toggleLabel}
-                    </button>
+                    <div className="inline-flex items-center gap-1">
+                      {resetButton}
+                      <button
+                        type="button"
+                        onClick={() => handleToggleActive(user)}
+                        disabled={isSelf}
+                        className={toggleClass}
+                      >
+                        {toggleLabel}
+                      </button>
+                    </div>
                   </td>
                 </tr>
               );
@@ -235,6 +358,8 @@ export default function AdminUsersPage() {
       <PageHeader
         title={t("admin.nav.users")}
         subtitle={t("admin.users.count", { count: total })}
+        onAdd={handleOpenStaffForm}
+        addLabel={t("admin.users.addStaff")}
       />
 
       <p className="mb-4 text-sm text-slate-500 dark:text-slate-400">
@@ -280,6 +405,23 @@ export default function AdminUsersPage() {
         {content}
       </div>
       <ConfirmDialog {...dialogProps} />
+      <StaffFormDialog
+        open={showStaffForm}
+        onClose={handleCloseStaffForm}
+        onCreated={handleStaffCreated}
+      />
+      {/* key: mở cho người khác thì tạo lại popup để ô nhập lấy đúng mã của người đó */}
+      <StaffCodeDialog
+        key={editingCodeUser ? editingCodeUser.id : "closed"}
+        user={editingCodeUser}
+        onClose={handleCloseEditCode}
+        onSaved={handleCodeSaved}
+      />
+      <PasswordResultDialog
+        result={passwordResult}
+        title={passwordTitle}
+        onClose={handleClosePassword}
+      />
     </div>
   );
 }

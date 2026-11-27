@@ -2,9 +2,21 @@ import { Link } from "react-router";
 import { PlusIcon } from "./Icons";
 
 // Tiêu đề trang admin, bên phải có thể có nút "Thêm mới"
-export function PageHeader({ title, subtitle, addTo, addLabel }) {
+// addTo: link tới trang thêm mới. onAdd: mở popup thêm mới (dùng 1 trong 2).
+export function PageHeader({ title, subtitle, addTo, addLabel, onAdd }) {
   let addButton = null;
-  if (addTo) {
+  if (onAdd) {
+    addButton = (
+      <button
+        type="button"
+        onClick={onAdd}
+        className="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-500"
+      >
+        <PlusIcon className="h-4 w-4" />
+        {addLabel}
+      </button>
+    );
+  } else if (addTo) {
     addButton = (
       <Link
         to={addTo}

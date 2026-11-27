@@ -113,7 +113,9 @@
     "DRIVE_KEY_INVALID": "The server GOOGLE_API_KEY is wrong. Check the key in Google Cloud → Credentials.",
     "DRIVE_API_DISABLED": "Google Drive API is not enabled for the Google Cloud project. Go to APIs & Services → Library → Google Drive API → Enable.",
     "DRIVE_KEY_RESTRICTED": "The API key is restricted (by website / IP / API). In Credentials, edit the key: set Application restrictions to None and API restrictions to Google Drive API only.",
-    "DRIVE_RATE_LIMITED": "Too many Google Drive requests in a short time, please wait and try again."
+    "DRIVE_RATE_LIMITED": "Too many Google Drive requests in a short time, please wait and try again.",
+    "STAFF_CODE_INVALID": "Staff code may only contain letters, numbers, dashes and underscores (2–20 characters).",
+    "STAFF_CODE_EXISTS": "This staff code is already in use."
   },
   "pagination": {
     "prev": "Previous",
@@ -417,7 +419,8 @@
       "status": "Status",
       "staffCode": "Staff code",
       "noName": "(No name)",
-      "deletedRoom": "(Room deleted)"
+      "deletedRoom": "(Room deleted)",
+      "staffUnknown": "no matching staff"
     },
     "images": {
       "title": "Images",
@@ -466,7 +469,28 @@
       "roleTitle": "Change role?",
       "confirmRole": "Change {{name}}'s role to \"{{role}}\"? They will be logged out and get the new permissions after logging in again.",
       "changeRole": "Change role",
-      "lockTitle": "Lock account?"
+      "lockTitle": "Lock account?",
+      "addStaff": "Add staff",
+      "createStaff": "Create account",
+      "staffCode": "Staff code",
+      "staffCodeAuto": "Leave empty to auto-assign (NV001, NV002...)",
+      "staffCodeHint": "Customers enter this code in the inquiry form. Letters, numbers and dashes only.",
+      "noStaffCode": "None",
+      "editStaffCode": "Edit staff code of {{name}}",
+      "phone": "Phone number",
+      "emailHint": "Staff log in with this email.",
+      "passwordAutoHint": "A password is generated automatically and shown only once after creating. Staff should change it on their profile page after logging in.",
+      "staffCreatedTitle": "Staff account created",
+      "resetDoneTitle": "Password reset",
+      "passwordOnce": "The password is shown only once. Copy it and send it to the staff member now; you can't see it again after closing.",
+      "copy": "Copy",
+      "copied": "Copied",
+      "copyAll": "Copy all",
+      "done": "Done",
+      "loginInfoText": "SaiGon Stay account for {{name}}\nEmail: {{email}}\nPassword: {{password}}\nPlease change your password on your profile page after logging in.",
+      "resetPassword": "Reset password",
+      "resetTitle": "Reset password?",
+      "confirmReset": "Create a new password for {{name}}? The old password will stop working and they will be logged out of every device."
     },
     "loginTitle": "Admin sign in",
     "loginSubtitle": "For admin accounts only.",

@@ -24,7 +24,12 @@ import {
   createUploadSignature,
   cleanupUploads,
 } from "../controllers/upload.controller.js";
-import { listUsers, updateUser } from "../controllers/admin.user.controller.js";
+import {
+  listUsers,
+  updateUser,
+  createStaff,
+  resetUserPassword,
+} from "../controllers/admin.user.controller.js";
 import { importRoHang } from "../controllers/admin.import.controller.js";
 import { listImages, listRoomImages, importImage } from "../controllers/admin.drive.controller.js";
 
@@ -52,7 +57,9 @@ router.get("/inquiries", listInquiries);
 router.patch("/inquiries/:id", updateInquiryStatus);
 
 router.get("/users", listUsers);
+router.post("/users", createStaff);
 router.patch("/users/:id", updateUser);
+router.post("/users/:id/reset-password", resetUserPassword);
 
 router.post("/uploads/signature", createUploadSignature);
 router.post("/uploads/cleanup", cleanupUploads);
