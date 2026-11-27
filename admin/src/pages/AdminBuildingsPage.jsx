@@ -14,6 +14,8 @@ import {
   tdClass,
   iconButtonClass,
   smallSelectClass,
+  rowClass,
+  dangerIconButtonClass,
 } from "../components/adminStyles";
 import {
   PencilIcon,
@@ -244,7 +246,7 @@ export default function AdminBuildingsPage() {
             }
 
             return (
-              <tr key={building._id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40">
+              <tr key={building._id} className={rowClass}>
                 <td className={tdClass}>
                   <Link
                     to={"/buildings/" + building._id}
@@ -286,7 +288,7 @@ export default function AdminBuildingsPage() {
                     <button
                       type="button"
                       onClick={() => handleDelete(building)}
-                      className={iconButtonClass + " hover:text-rose-600 dark:hover:text-rose-400"}
+                      className={dangerIconButtonClass}
                       aria-label={t("admin.common.delete")}
                       title={t("admin.common.delete")}
                     >

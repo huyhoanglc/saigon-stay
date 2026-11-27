@@ -15,6 +15,8 @@ import {
   tdClass,
   smallSelectClass,
   iconButtonClass,
+  rowClass,
+  dangerIconButtonClass,
 } from "../components/adminStyles";
 import Pagination from "../components/Pagination";
 import ConfirmDialog from "../components/ConfirmDialog";
@@ -188,7 +190,7 @@ export default function AdminRoomsPage() {
               }
 
               return (
-                <tr key={room._id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40">
+                <tr key={room._id} className={rowClass}>
                   <td className={tdClass}>
                     <Link
                       to={"/rooms/" + room._id}
@@ -241,7 +243,7 @@ export default function AdminRoomsPage() {
                       <button
                         type="button"
                         onClick={() => handleDelete(room)}
-                        className={iconButtonClass + " hover:text-rose-600 dark:hover:text-rose-400"}
+                        className={dangerIconButtonClass}
                         aria-label={t("admin.common.delete")}
                         title={t("admin.common.delete")}
                       >

@@ -5,7 +5,7 @@ import { importRoHang } from "../api/client";
 import { PageHeader } from "../components/AdminUI";
 import { ErrorMessage } from "../components/FormFields";
 import ImportPreview from "../components/ImportPreview";
-import { thClass, tdClass } from "../components/adminStyles";
+import { thClass, tdClass, rowClass } from "../components/adminStyles";
 import { UploadIcon, CheckIcon, AlertIcon } from "../components/Icons";
 
 const cardClass =
@@ -84,7 +84,7 @@ function IssuesTable({ issues }) {
             }
 
             return (
-              <tr key={index}>
+              <tr key={index} className={rowClass}>
                 <td className={tdClass + " whitespace-nowrap"}>{issue.sheet}</td>
                 <td className={tdClass}>{issue.row || "-"}</td>
                 <td className={tdClass + " whitespace-nowrap"}>{issue.column || "-"}</td>

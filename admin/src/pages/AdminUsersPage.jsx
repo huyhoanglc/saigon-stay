@@ -16,6 +16,7 @@ import {
   tdClass,
   smallSelectClass,
   iconButtonClass,
+  rowClass,
 } from "../components/adminStyles";
 import Pagination from "../components/Pagination";
 import ConfirmDialog from "../components/ConfirmDialog";
@@ -182,7 +183,7 @@ export default function AdminUsersPage() {
               }
 
               return (
-                <tr key={user.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40">
+                <tr key={user.id} className={rowClass}>
                   <td className={tdClass}>
                     <p className="font-medium text-slate-800 dark:text-slate-100">
                       {user.name}

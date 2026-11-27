@@ -10,7 +10,7 @@ import {
   StatusBadge,
 } from "../components/AdminUI";
 import { ErrorMessage } from "../components/FormFields";
-import { thClass, tdClass, smallSelectClass } from "../components/adminStyles";
+import { thClass, tdClass, smallSelectClass, rowClass } from "../components/adminStyles";
 import Pagination from "../components/Pagination";
 import { INQUIRY_STATUSES } from "../utils/constants";
 
@@ -148,7 +148,7 @@ export default function AdminInquiriesPage() {
               }
 
               return (
-                <tr key={inquiry._id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40">
+                <tr key={inquiry._id} className={rowClass}>
                   <td className={tdClass}>
                     <p className="font-medium text-slate-800 dark:text-slate-100">{name}</p>
                     <a

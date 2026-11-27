@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { formatPrice, formatShort } from "../utils/format";
-import { thClass, tdClass } from "./adminStyles";
+import { thClass, tdClass, rowClass } from "./adminStyles";
 import { SearchIcon } from "./Icons";
 
 const badgeBase = "inline-block whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-medium";
@@ -145,7 +145,7 @@ function RoomsTable({ project }) {
           {project.rooms.map((group) => {
             const existing = group.existingCodes || [];
             return (
-              <tr key={group.sourceRow}>
+              <tr key={group.sourceRow} className={rowClass}>
                 <td className={tdClass}>
                   <div className="flex flex-wrap gap-1">
                     {group.roomCodes.map((code) => {
