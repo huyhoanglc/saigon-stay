@@ -192,7 +192,8 @@
     "favoriteRemove": "Đã quan tâm",
     "contactNow": "Yêu cầu tư vấn",
     "otherRooms": "Phòng khác trong tòa nhà",
-    "notFound": "Phòng này không tồn tại hoặc đã được cho thuê."
+    "notFound": "Phòng này không tồn tại hoặc đã được cho thuê.",
+    "updating": "Đang cập nhật"
   },
   "amenity": {
     "elevator": "Thang máy",

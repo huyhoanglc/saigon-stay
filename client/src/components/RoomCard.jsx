@@ -69,7 +69,10 @@ export default function RoomCard({ room }) {
   if (building.hasFireSafety) {
     tags.push(t("room.fireSafety"));
   }
-  tags.push(t("road." + building.roadType));
+  // Tòa nhập từ Excel có thể chưa có thông tin đường vào → bỏ qua nhãn này
+  if (building.roadType) {
+    tags.push(t("road." + building.roadType));
+  }
   if (room.minLeaseMonths >= 6) {
     tags.push(t("room.longTerm"));
   } else {

@@ -194,7 +194,8 @@
     "favoriteRemove": "Saved",
     "contactNow": "Request a viewing",
     "otherRooms": "Other rooms in this building",
-    "notFound": "This room does not exist or has been rented."
+    "notFound": "This room does not exist or has been rented.",
+    "updating": "Updating"
   },
   "amenity": {
     "elevator": "Elevator",

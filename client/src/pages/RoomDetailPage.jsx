@@ -74,8 +74,15 @@ export default function RoomDetailPage() {
 
   // Đổi tiêu đề tab trình duyệt
   useEffect(() => {
-    if (room && room.title) {
-      document.title = room.title + " | SaiGon Stay";
+    if (room) {
+      // Chưa có tiêu đề thì dùng "Tên tòa · Mã phòng", giống phần tiêu đề trên trang
+      let tabTitle = room.title;
+      if (!tabTitle && room.building) {
+        tabTitle = room.building.name + " · " + room.code;
+      }
+      if (tabTitle) {
+        document.title = tabTitle + " | SaiGon Stay";
+      }
     }
 
     return () => {
@@ -132,12 +139,18 @@ export default function RoomDetailPage() {
     title = building.name + " · " + room.code;
   }
 
-  const addressText =
-    building.address.street +
-    ", " +
-    building.address.ward +
-    ", " +
-    building.address.area;
+  // Ghép địa chỉ, bỏ qua phần còn trống (tòa nhập từ Excel có thể chưa có phường)
+  const addressParts = [];
+  if (building.address.street) {
+    addressParts.push(building.address.street);
+  }
+  if (building.address.ward) {
+    addressParts.push(building.address.ward);
+  }
+  if (building.address.area) {
+    addressParts.push(building.address.area);
+  }
+  const addressText = addressParts.join(", ");
 
   // ===== Trạng thái =====
   const isUpcoming = room.status === "upcoming";
@@ -209,13 +222,23 @@ export default function RoomDetailPage() {
     separateKitchenText = t("detail.yes");
   }
 
+  // Phòng nhập từ Excel chưa có diện tích → hiện "Đang cập nhật" thay vì "undefined m²"
+  let sizeText = t("detail.updating");
+  if (room.size) {
+    sizeText = room.size + " m²";
+  }
+
   let privateWasherText = t("detail.no");
   if (room.privateWasher) {
     privateWasherText = t("detail.yes");
   }
 
   // ===== Tiện ích tòa nhà =====
-  let roadText = t("road." + building.roadType);
+  // Tòa nhập từ Excel có thể chưa có thông tin đường vào
+  let roadText = t("detail.updating");
+  if (building.roadType) {
+    roadText = t("road." + building.roadType);
+  }
   if (building.isDeadEnd) {
     roadText = roadText + " · " + t("amenity.deadEnd");
   }
@@ -405,7 +428,7 @@ export default function RoomDetailPage() {
                     label={t("filters.layout")}
                     value={t("layout." + room.layout)}
                   />
-                  <InfoRow label={t("detail.size")} value={room.size + " m²"} />
+                  <InfoRow label={t("detail.size")} value={sizeText} />
                   <InfoRow label={t("detail.floor")} value={floorText} />
                   <InfoRow
                     label={t("detail.maxOccupants")}

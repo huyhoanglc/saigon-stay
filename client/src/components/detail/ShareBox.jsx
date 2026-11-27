@@ -64,9 +64,15 @@ export default function ShareBox({ room }) {
     images = room.images;
   }
 
+  // Chưa có tiêu đề thì dùng "Tên tòa · Mã phòng" (giống trang chi tiết)
+  let roomTitle = room.title;
+  if (!roomTitle) {
+    roomTitle = building.name + " · " + room.code;
+  }
+
   const priceText = formatPrice(room.price, i18n.language);
   const shareText =
-    room.title +
+    roomTitle +
     "\n" +
     t("share.priceLine", { price: priceText }) +
     "\n" +
@@ -116,7 +122,7 @@ export default function ShareBox({ room }) {
   async function handleNativeShare() {
     try {
       await navigator.share({
-        title: room.title,
+        title: roomTitle,
         text: shareText,
         url: url,
       });
@@ -210,7 +216,7 @@ export default function ShareBox({ room }) {
 
       await navigator.share({
         files: preparedFilesRef.current,
-        title: room.title,
+        title: roomTitle,
         text: shareText + "\n" + url,
       });
     } catch (err) {
