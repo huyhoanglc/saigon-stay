@@ -357,7 +357,16 @@
       "confirmDeleteWithRooms_one": "Building \"{{name}}\" still has {{count}} room. Deleting it also deletes that room and its photos. This cannot be undone.",
       "confirmDeleteWithRooms_other": "Building \"{{name}}\" still has {{count}} rooms. Deleting it also deletes all {{count}} rooms and their photos. This cannot be undone.",
       "deleteWithRooms_one": "Delete building and {{count}} room",
-      "deleteWithRooms_other": "Delete building and {{count}} rooms"
+      "deleteWithRooms_other": "Delete building and {{count}} rooms",
+      "count_one": "{{count}} building",
+      "count_other": "{{count}} buildings",
+      "noMatch": "No buildings match these filters.",
+      "resetFilters": "Clear filters",
+      "allRoadTypes": "All access roads",
+      "roadTypeMissing": "Not set",
+      "searchPlaceholder": "Search name, project code, house number, street...",
+      "allAreas": "All areas",
+      "needsInfoOnly": "Only buildings needing info"
     },
     "rooms": {
       "add": "Add room",

@@ -349,7 +349,15 @@
       "unknown": "Chưa rõ",
       "sourcingHint": "Các thông tin này lấy từ file Excel, muốn sửa thì sửa trong file rồi nhập lại.",
       "confirmDeleteWithRooms": "Tòa nhà \"{{name}}\" còn {{count}} phòng. Xoá tòa sẽ xoá luôn cả {{count}} phòng này cùng ảnh của chúng. Không thể hoàn tác.",
-      "deleteWithRooms": "Xoá tòa và {{count}} phòng"
+      "deleteWithRooms": "Xoá tòa và {{count}} phòng",
+      "count": "{{count}} tòa nhà",
+      "noMatch": "Không có tòa nhà nào phù hợp với bộ lọc.",
+      "resetFilters": "Xoá bộ lọc",
+      "allRoadTypes": "Tất cả đường vào",
+      "roadTypeMissing": "Chưa có thông tin",
+      "searchPlaceholder": "Tìm tên, mã dự án, số nhà, tên đường...",
+      "allAreas": "Tất cả khu vực",
+      "needsInfoOnly": "Chỉ tòa cần bổ sung"
     },
     "rooms": {
       "add": "Thêm phòng",

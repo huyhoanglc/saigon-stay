@@ -9,6 +9,8 @@ import {
   isNumberInRange,
   isIntegerInRange,
   readImages,
+  escapeRegex,
+  readPaging,
 } from "../utils/validate.js";
 import { deleteUnusedImages, findRemovedImages } from "../utils/cloudinary.js";
 
@@ -203,13 +205,112 @@ function sendBuildingNotFound(res) {
 }
 
 // GET /api/admin/buildings
-export async function listBuildings(req, res) {
-  const buildings = await Building.find()
-    .select(HIDDEN_FIELDS)
-    .sort({ createdAt: -1 });
+// Dựng điều kiện lọc từ query. Trả về { filter } hoặc { error }.
+function buildBuildingFilter(query) {
+  // Gom các điều kiện vào $and vì có 2 nhóm "hoặc" (tìm kiếm, cần bổ sung) không được ghi đè nhau
+  const conditions = [];
 
-  // Đếm số phòng của từng tòa trong 1 lần query
+  // Tìm theo tên, mã dự án, số nhà, tên đường (không phân biệt hoa thường)
+  const keyword = readString(query.q);
+  if (keyword !== "") {
+    const pattern = new RegExp(escapeRegex(keyword), "i");
+    conditions.push({
+      $or: [
+        { name: pattern },
+        { projectCode: pattern },
+        { "address.houseNumber": pattern },
+        { "address.street": pattern },
+      ],
+    });
+  }
+
+  const area = readString(query.area);
+  if (area !== "") {
+    conditions.push({ "address.area": area });
+  }
+
+  // roadType=none: tòa nhập từ Excel chưa có thông tin đường vào
+  if (query.roadType) {
+    if (query.roadType === "none") {
+      conditions.push({ roadType: { $exists: false } });
+    } else if (ROAD_TYPES.includes(query.roadType)) {
+      conditions.push({ roadType: query.roadType });
+    } else {
+      return fail("ROAD_TYPE_INVALID", "Loại đường không hợp lệ");
+    }
+  }
+
+  // Cần bổ sung = thiếu phường hoặc thiếu tọa độ (giống badge vàng ở danh sách)
+  if (query.needsInfo === "true") {
+    conditions.push({
+      $or: [
+        { "address.ward": "" },
+        { "address.ward": { $exists: false } },
+        { "location.coordinates": { $exists: false } },
+      ],
+    });
+  }
+
+  let filter = {};
+  if (conditions.length > 0) {
+    filter = { $and: conditions };
+  }
+  return { filter: filter };
+}
+
+// GET /api/admin/buildings
+// - Không gửi page: trả về tất cả (dùng cho ô chọn tòa nhà ở trang Phòng)
+// - Có page: lọc + phân trang (trang danh sách Tòa nhà)
+//   Query: q, area, roadType (street_front | car_alley | motorbike_alley | none), needsInfo=true, page, limit
+export async function listBuildings(req, res) {
+  const query = req.query;
+
+  if (!query.page) {
+    const all = await Building.find()
+      .select(HIDDEN_FIELDS)
+      .sort({ createdAt: -1 });
+    const items = await attachRoomCounts(all);
+    return res.json({ items: items });
+  }
+
+  const result = buildBuildingFilter(query);
+  if (result.error) {
+    return res.status(400).json(result.error);
+  }
+
+  const paging = readPaging(query, 20, 100);
+  const skip = (paging.page - 1) * paging.limit;
+
+  const buildings = await Building.find(result.filter)
+    .select(HIDDEN_FIELDS)
+    .sort({ createdAt: -1, _id: -1 })
+    .skip(skip)
+    .limit(paging.limit);
+  const total = await Building.countDocuments(result.filter);
+  const items = await attachRoomCounts(buildings);
+
+  // Danh sách khu vực đang có trong dữ liệu, để làm ô lọc (tòa nhập từ Excel có thể có khu vực mới)
+  const areas = await Building.distinct("address.area");
+  areas.sort((a, b) => a.localeCompare(b, "vi"));
+
+  res.json({
+    items: items,
+    total: total,
+    page: paging.page,
+    totalPages: Math.ceil(total / paging.limit),
+    areas: areas,
+  });
+}
+
+// Gắn thêm số phòng vào từng tòa. Chỉ đếm cho các tòa đang trả về, không đếm cả database.
+async function attachRoomCounts(buildings) {
+  const ids = [];
+  for (const building of buildings) {
+    ids.push(building._id);
+  }
+
   const counts = await Room.aggregate([
+    { $match: { building: { $in: ids } } },
     { $group: { _id: "$building", count: { $sum: 1 } } },
   ]);
   const countByBuilding = {};
@@ -228,7 +329,7 @@ export async function listBuildings(req, res) {
     items.push(item);
   }
 
-  res.json({ items: items });
+  return items;
 }
 
 // GET /api/admin/buildings/:id

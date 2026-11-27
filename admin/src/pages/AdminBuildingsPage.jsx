@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { Link } from "react-router";
+import { Link, useSearchParams } from "react-router";
 import { useTranslation } from "react-i18next";
-import { useAdminBuildings } from "../hooks/useAdminBuildings";
+import { useAdminBuildingList } from "../hooks/useAdminBuildingList";
 import { deleteBuilding } from "../api/client";
 import {
   PageHeader,
@@ -9,8 +9,21 @@ import {
   TableWrapper,
 } from "../components/AdminUI";
 import { ErrorMessage } from "../components/FormFields";
-import { thClass, tdClass, iconButtonClass } from "../components/adminStyles";
-import { PencilIcon, TrashIcon, SparklesIcon, AlertIcon } from "../components/Icons";
+import {
+  thClass,
+  tdClass,
+  iconButtonClass,
+  smallSelectClass,
+} from "../components/adminStyles";
+import {
+  PencilIcon,
+  TrashIcon,
+  SparklesIcon,
+  AlertIcon,
+  SearchIcon,
+} from "../components/Icons";
+import Pagination from "../components/Pagination";
+import { ROAD_TYPES } from "../utils/constants";
 import ConfirmDialog from "../components/ConfirmDialog";
 import { useConfirm } from "../hooks/useConfirm";
 
@@ -18,8 +31,77 @@ export default function AdminBuildingsPage() {
   const { t } = useTranslation();
   const [reloadKey, setReloadKey] = useState(0);
   const [actionError, setActionError] = useState("");
-  const { buildings, loading, error } = useAdminBuildings(reloadKey);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Bộ lọc lưu trên URL: F5 không mất, gửi link cho người khác vẫn đúng bộ lọc
+  const q = searchParams.get("q") || "";
+  const area = searchParams.get("area") || "";
+  const roadType = searchParams.get("roadType") || "";
+  const needsInfo = searchParams.get("needsInfo") === "true";
+  let page = Number(searchParams.get("page"));
+  if (!Number.isInteger(page) || page < 1) {
+    page = 1;
+  }
+
+  let hasFilter = false;
+  if (q !== "" || area !== "" || roadType !== "" || needsInfo) {
+    hasFilter = true;
+  }
+
+  // Ô tìm kiếm chỉ áp dụng khi bấm Enter / nút tìm, không gọi API mỗi lần gõ phím
+  const [keyword, setKeyword] = useState(q);
+
+  const { buildings, total, totalPages, areas, loading, error } =
+    useAdminBuildingList({
+      q: q,
+      area: area,
+      roadType: roadType,
+      needsInfo: needsInfo,
+      page: page,
+      reloadKey: reloadKey,
+    });
   const { askConfirm, dialogProps } = useConfirm();
+
+  // Cập nhật 1 tham số trên URL, đổi bộ lọc thì quay về trang 1
+  function updateParam(name, value) {
+    const next = new URLSearchParams(searchParams);
+    if (value) {
+      next.set(name, value);
+    } else {
+      next.delete(name);
+    }
+    if (name !== "page") {
+      next.delete("page");
+    }
+    setSearchParams(next);
+  }
+
+  function handleFilterChange(event) {
+    updateParam(event.target.name, event.target.value);
+  }
+
+  function handleNeedsInfoChange(event) {
+    let value = "";
+    if (event.target.checked) {
+      value = "true";
+    }
+    updateParam("needsInfo", value);
+  }
+
+  function handleSearchSubmit(event) {
+    event.preventDefault();
+    updateParam("q", keyword.trim());
+  }
+
+  function handleResetFilters() {
+    setKeyword("");
+    setSearchParams(new URLSearchParams());
+  }
+
+  function handlePageChange(newPage) {
+    updateParam("page", String(newPage));
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
 
   function handleDelete(building) {
     // Tòa còn phòng: báo rõ sẽ xoá luôn bao nhiêu phòng, admin đồng ý mới xoá
@@ -39,7 +121,12 @@ export default function AdminBuildingsPage() {
         setActionError("");
         try {
           await deleteBuilding(building._id, roomCount > 0);
-          setReloadKey((key) => key + 1);
+          // Xoá tòa cuối cùng của trang (không phải trang 1) thì lùi về trang trước, tránh trang trống
+          if (buildings.length === 1 && page > 1) {
+            updateParam("page", String(page - 1));
+          } else {
+            setReloadKey((key) => key + 1);
+          }
         } catch (err) {
           setActionError(t("errors." + err.code));
         }
@@ -163,16 +250,117 @@ export default function AdminBuildingsPage() {
     );
   }
 
+  // Có lọc mà không ra kết quả thì nói rõ là "không có tòa phù hợp", khác với "chưa có tòa nào"
+  if (!loading && !error && buildings.length === 0 && hasFilter) {
+    content = <StateMessage>{t("admin.buildings.noMatch")}</StateMessage>;
+  }
+
+  let pagination = null;
+  if (!loading && !error && buildings.length > 0) {
+    pagination = (
+      <Pagination page={page} totalPages={totalPages} onChange={handlePageChange} />
+    );
+  }
+
+  let resetButton = null;
+  if (hasFilter) {
+    resetButton = (
+      <button
+        type="button"
+        onClick={handleResetFilters}
+        className="text-sm text-slate-500 underline hover:text-rose-600 dark:text-slate-400 dark:hover:text-rose-400"
+      >
+        {t("admin.buildings.resetFilters")}
+      </button>
+    );
+  }
+
+  const roadOptions = [
+    { value: "", label: t("admin.buildings.allRoadTypes") },
+  ];
+  for (const road of ROAD_TYPES) {
+    roadOptions.push({ value: road, label: t("road." + road) });
+  }
+  roadOptions.push({ value: "none", label: t("admin.buildings.roadTypeMissing") });
+
   return (
     <div>
       <PageHeader
         title={t("admin.nav.buildings")}
+        subtitle={t("admin.buildings.count", { count: total })}
         addTo="/buildings/new"
         addLabel={t("admin.buildings.add")}
       />
+
+      {/* Thanh lọc: điện thoại xếp dọc, màn rộng xếp ngang */}
+      <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+        <form
+          onSubmit={handleSearchSubmit}
+          className="flex min-w-0 flex-1 gap-2 sm:max-w-sm"
+        >
+          <input
+            type="search"
+            value={keyword}
+            onChange={(e) => setKeyword(e.target.value)}
+            placeholder={t("admin.buildings.searchPlaceholder")}
+            aria-label={t("admin.common.search")}
+            className={smallSelectClass + " min-w-0 flex-1 py-2"}
+          />
+          <button
+            type="submit"
+            className={iconButtonClass + " h-10 w-10 border border-slate-300 dark:border-slate-700"}
+            aria-label={t("admin.common.search")}
+          >
+            <SearchIcon className="h-4 w-4" />
+          </button>
+        </form>
+
+        <select
+          name="area"
+          value={area}
+          onChange={handleFilterChange}
+          aria-label={t("admin.buildings.area")}
+          className={smallSelectClass + " py-2"}
+        >
+          <option value="">{t("admin.buildings.allAreas")}</option>
+          {areas.map((item) => (
+            <option key={item} value={item}>
+              {item}
+            </option>
+          ))}
+        </select>
+
+        <select
+          name="roadType"
+          value={roadType}
+          onChange={handleFilterChange}
+          aria-label={t("admin.buildings.roadType")}
+          className={smallSelectClass + " py-2"}
+        >
+          {roadOptions.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+
+        <label className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200">
+          <input
+            type="checkbox"
+            checked={needsInfo}
+            onChange={handleNeedsInfoChange}
+            className="h-4 w-4 accent-amber-500"
+          />
+          {t("admin.buildings.needsInfoOnly")}
+        </label>
+
+        {resetButton}
+      </div>
+
       <div className="space-y-4">
         <ErrorMessage message={actionError} />
         {content}
+        {pagination}
       </div>
       <ConfirmDialog {...dialogProps} />
     </div>
