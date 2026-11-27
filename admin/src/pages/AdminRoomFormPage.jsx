@@ -237,7 +237,6 @@ function RoomForm({ id, initialForm, buildings }) {
           min="1"
           value={form.size}
           onChange={handleChange}
-          required
         />
         <TextField
           label={t("detail.maxOccupants")}

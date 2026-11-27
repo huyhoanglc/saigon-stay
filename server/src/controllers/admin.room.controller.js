@@ -57,8 +57,10 @@ function parseRoomInput(body) {
     return fail("LAYOUT_INVALID", "Loại phòng không hợp lệ");
   }
 
+  // Diện tích không bắt buộc: phòng nhập từ Excel chưa có, admin bổ sung dần.
+  // Có nhập thì phải hợp lệ.
   const size = readNumber(body.size);
-  if (size === null || !isNumberInRange(size, 1, 1000)) {
+  if (size !== null && !isNumberInRange(size, 1, 1000)) {
     return fail("SIZE_INVALID", "Diện tích không hợp lệ");
   }
 
@@ -141,6 +143,11 @@ function parseRoomInput(body) {
   }
 
   // Ô số để trống thì lưu undefined để Mongoose xoá trường đó khi cập nhật
+  // Để trống diện tích → undefined để Mongoose không lưu (không lưu null)
+  let sizeValue = undefined;
+  if (size !== null) {
+    sizeValue = size;
+  }
   let floorValue = undefined;
   if (floor !== null) {
     floorValue = floor;
@@ -162,7 +169,7 @@ function parseRoomInput(body) {
     floor: floorValue,
     layout: body.layout,
     separateKitchen: readBoolean(body.separateKitchen),
-    size: size,
+    size: sizeValue,
     maxOccupants: maxOccupants,
     window: windowType,
     furniture: furniture,
@@ -199,49 +206,6 @@ async function checkRoomConflicts(data, excludeRoomId) {
   }
 
   return null;
-}
-
-// Phòng nhập từ Excel chưa có diện tích, tòa chưa có phường / tọa độ.
-// Chưa đủ thì chỉ được để "hidden", không cho hiện lên web khách (trang chi tiết sẽ thiếu dữ liệu).
-async function checkCanPublish(status, buildingId, size) {
-  if (status === "hidden") {
-    return null;
-  }
-
-  const building = await Building.findById(buildingId).select("address.ward location");
-  if (!building) {
-    return fail("BUILDING_NOT_FOUND", "Không tìm thấy tòa nhà");
-  }
-
-  const missing = [];
-  if (!size) {
-    missing.push("size");
-  }
-  if (!building.address || !building.address.ward) {
-    missing.push("ward");
-  }
-  const coordinates = building.location && building.location.coordinates;
-  if (!coordinates || coordinates.length !== 2) {
-    missing.push("location");
-  }
-  if (missing.length === 0) {
-    return null;
-  }
-
-  const result = fail(
-    "ROOM_NOT_READY",
-    "Cần bổ sung diện tích phòng, phường và tọa độ của tòa nhà trước khi hiện phòng lên web",
-  );
-  result.error.missing = missing;
-  return result;
-}
-
-function sendNotReady(res, notReady) {
-  let status = 409;
-  if (notReady.error.code === "BUILDING_NOT_FOUND") {
-    status = 404;
-  }
-  return res.status(status).json(notReady.error);
 }
 
 function sendInvalidId(res) {
@@ -341,11 +305,6 @@ export async function createRoom(req, res) {
     return res.status(status).json(conflict.error);
   }
 
-  const notReady = await checkCanPublish(result.data.status, result.data.building, result.data.size);
-  if (notReady) {
-    return sendNotReady(res, notReady);
-  }
-
   const room = await Room.create(result.data);
   res.status(201).json({ id: room._id });
 }
@@ -379,11 +338,6 @@ export async function updateRoom(req, res) {
       status = 404;
     }
     return res.status(status).json(conflict.error);
-  }
-
-  const notReady = await checkCanPublish(result.data.status, result.data.building, result.data.size);
-  if (notReady) {
-    return sendNotReady(res, notReady);
   }
 
   // Nhớ danh sách ảnh cũ để biết ảnh nào bị bỏ đi
@@ -434,17 +388,6 @@ export async function patchRoom(req, res) {
     return res
       .status(400)
       .json({ code: "NOTHING_TO_UPDATE", message: "Không có gì để cập nhật" });
-  }
-
-  if (changes.status !== undefined) {
-    const current = await Room.findById(id).select("building size");
-    if (!current) {
-      return sendRoomNotFound(res);
-    }
-    const notReady = await checkCanPublish(changes.status, current.building, current.size);
-    if (notReady) {
-      return sendNotReady(res, notReady);
-    }
   }
 
   const room = await Room.findByIdAndUpdate(id, changes, {

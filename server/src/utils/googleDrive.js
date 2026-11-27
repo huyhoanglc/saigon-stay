@@ -77,17 +77,101 @@ async function callDrive(path, params) {
   search.set("supportsAllDrives", "true");
 
   const response = await fetch(DRIVE_API + path + "?" + search.toString());
-  if (response.status === 403 || response.status === 404) {
-    throw new DriveError(
+  if (response.ok) {
+    return response;
+  }
+
+  // Đọc nội dung lỗi Google gửi về để biết lý do thật (key sai, chưa bật API, chưa chia sẻ...)
+  let body = null;
+  try {
+    body = await response.json();
+  } catch {
+    body = null;
+  }
+  const error = classifyDriveError(response.status, body);
+
+  // Ghi log lời nhắn gốc của Google để dò lỗi trên Render (lời nhắn này không chứa API key)
+  let googleMessage = "";
+  if (body && body.error && body.error.message) {
+    googleMessage = body.error.message;
+  }
+  console.error("Google Drive lỗi " + response.status + " (" + error.code + "): " + googleMessage);
+
+  throw error;
+}
+
+// Gom các "reason" trong lỗi Google trả về. Google để lý do ở 2 chỗ:
+//   error.errors[].reason   (kiểu cũ, vd "accessNotConfigured", "notFound")
+//   error.details[].reason  (kiểu mới, vd "API_KEY_INVALID", "SERVICE_DISABLED")
+function readErrorReasons(body) {
+  const reasons = [];
+  if (!body || !body.error) {
+    return reasons;
+  }
+  const lists = [body.error.errors, body.error.details];
+  for (const list of lists) {
+    if (Array.isArray(list)) {
+      for (const item of list) {
+        if (item && item.reason) {
+          reasons.push(item.reason);
+        }
+      }
+    }
+  }
+  return reasons;
+}
+
+const KEY_RESTRICTED_REASONS = [
+  "API_KEY_HTTP_REFERRER_BLOCKED",
+  "API_KEY_IP_ADDRESS_BLOCKED",
+  "API_KEY_SERVICE_BLOCKED",
+  "API_KEY_ANDROID_APP_BLOCKED",
+  "API_KEY_IOS_APP_BLOCKED",
+];
+
+// Đổi lỗi của Google thành DriveError có mã riêng, để admin biết phải sửa ở đâu.
+// Hàm thuần (không gọi mạng) nên viết test được.
+export function classifyDriveError(status, body) {
+  const reasons = readErrorReasons(body);
+
+  function hasReason(list) {
+    for (const reason of reasons) {
+      if (list.includes(reason)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  if (hasReason(["API_KEY_INVALID", "keyInvalid"])) {
+    return new DriveError("DRIVE_KEY_INVALID", "GOOGLE_API_KEY không đúng", 503);
+  }
+  if (hasReason(["SERVICE_DISABLED", "accessNotConfigured"])) {
+    return new DriveError(
+      "DRIVE_API_DISABLED",
+      "Project Google Cloud chưa bật Google Drive API",
+      503,
+    );
+  }
+  if (hasReason(KEY_RESTRICTED_REASONS)) {
+    return new DriveError(
+      "DRIVE_KEY_RESTRICTED",
+      "API key đang bị giới hạn nên server không dùng được",
+      503,
+    );
+  }
+  if (status === 429 || hasReason(["rateLimitExceeded", "userRateLimitExceeded", "RATE_LIMIT_EXCEEDED"])) {
+    return new DriveError("DRIVE_RATE_LIMITED", "Gọi Google Drive quá nhiều, thử lại sau", 503);
+  }
+  // Còn lại 403 / 404: file không tồn tại hoặc chưa chia sẻ công khai
+  if (status === 403 || status === 404) {
+    return new DriveError(
       "DRIVE_NOT_ACCESSIBLE",
       "Không mở được trên Google Drive. Kiểm tra link và quyền chia sẻ \"Bất kỳ ai có đường liên kết\".",
       400,
     );
   }
-  if (!response.ok) {
-    throw new DriveError("DRIVE_FAILED", "Google Drive lỗi (" + response.status + ")", 502);
-  }
-  return response;
+  return new DriveError("DRIVE_FAILED", "Google Drive lỗi (" + status + ")", 502);
 }
 
 const FILE_FIELDS = "id,name,mimeType,size,thumbnailLink";

@@ -99,7 +99,6 @@
     "EMAIL_REQUIRED_FOR_PASSWORD": "Tài khoản chưa có email nên chưa đặt được mật khẩu",
     "AVATAR_INVALID": "Ảnh đại diện không hợp lệ",
     "AVATAR_TOO_LARGE": "Ảnh đại diện quá lớn (tối đa 5MB)",
-    "ROOM_NOT_READY": "Phòng chưa đủ thông tin để hiện lên web: cần diện tích phòng, phường và tọa độ của tòa nhà.",
     "FILE_REQUIRED": "Chưa chọn file Excel.",
     "FILE_NOT_XLSX": "File không phải Excel (.xlsx) hoặc bị hỏng.",
     "IMPORT_EMPTY": "Không có dự án hợp lệ nào để nhập.",
@@ -110,7 +109,11 @@
     "DRIVE_FILE_TOO_LARGE": "Có ảnh quá lớn (tối đa 25MB) nên bị bỏ qua.",
     "DRIVE_FAILED": "Google Drive đang lỗi, thử lại sau.",
     "DRIVE_FOLDER_NOT_FOUND": "Không tự tìm thấy thư mục ảnh của phòng này trên Drive. Dán link thư mục vào ô bên trên.",
-    "DRIVE_ROOT_NOT_CONFIGURED": "Server chưa cấu hình GOOGLE_DRIVE_ROOT (link thư mục HÌNH ẢNH DỰ ÁN). Dán link thư mục vào ô bên trên."
+    "DRIVE_ROOT_NOT_CONFIGURED": "Server chưa cấu hình GOOGLE_DRIVE_ROOT (link thư mục HÌNH ẢNH DỰ ÁN). Dán link thư mục vào ô bên trên.",
+    "DRIVE_KEY_INVALID": "GOOGLE_API_KEY trên server không đúng. Kiểm tra lại key trong Google Cloud → Credentials.",
+    "DRIVE_API_DISABLED": "Project Google Cloud chưa bật Google Drive API. Vào APIs & Services → Library → Google Drive API → Enable.",
+    "DRIVE_KEY_RESTRICTED": "API key đang bị giới hạn (theo website / IP / API). Vào Credentials → sửa key: Application restrictions chọn None, API restrictions chỉ chọn Google Drive API.",
+    "DRIVE_RATE_LIMITED": "Gọi Google Drive quá nhiều trong thời gian ngắn, đợi một lát rồi thử lại."
   },
   "pagination": {
     "prev": "Trước",
